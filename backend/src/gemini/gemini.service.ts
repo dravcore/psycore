@@ -27,11 +27,13 @@ export class GeminiService {
     this.logger.log('Google Gemini 2.0 Flash Lite AI initialized successfully');
   }
 
-  async analyzeSentiment(text: string): Promise<SentimentAnalysisResult> {
+  async analyzeSentiment(text: string, retryCount = 0): Promise<SentimentAnalysisResult> {
     if (!this.ai) {
       throw new Error('Google AI not configured');
     }
 
+    const maxRetries = 3;
+    
     try {
       const prompt = `Sen profesyonel bir psikolog ve duygu analizi uzmanısın. Aşağıdaki metni analiz et ve psikolojik bir değerlendirme yap.
 
@@ -78,6 +80,15 @@ Odaklan:
       
       return parsedResult;
     } catch (error) {
+      // Retry with exponential backoff for rate limit and overload errors
+      if ((error.status === 429 || error.status === 503) && retryCount < maxRetries) {
+        const waitTime = Math.pow(2, retryCount) * 5000; // 5s, 10s, 20s
+        const errorType = error.status === 429 ? 'Rate limit' : 'Model overloaded';
+        this.logger.warn(`${errorType} (${error.status}), retrying in ${waitTime/1000}s... (attempt ${retryCount + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        return this.analyzeSentiment(text, retryCount + 1);
+      }
+      
       this.logger.error('Error analyzing sentiment:', error);
       throw error;
     }

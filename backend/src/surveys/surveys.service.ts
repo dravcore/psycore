@@ -176,11 +176,6 @@ export class SurveysService {
       },
     });
 
-    // Perform sentiment analysis on TEXT type answers asynchronously
-    this.performSentimentAnalysis(response.answers).catch(error => {
-      this.logger.error('Failed to perform sentiment analysis:', error);
-    });
-
     return response;
   }
 
@@ -193,7 +188,8 @@ export class SurveysService {
 
     this.logger.log(`Performing sentiment analysis on ${textAnswers.length} TEXT answers`);
 
-    for (const answer of textAnswers) {
+    for (let i = 0; i < textAnswers.length; i++) {
+      const answer = textAnswers[i];
       try {
         const analysis = await this.geminiService.analyzeSentiment(answer.value);
         
@@ -209,8 +205,19 @@ export class SurveysService {
         });
 
         this.logger.log(`Sentiment analysis completed for answer ${answer.id}: ${analysis.sentiment} (${analysis.confidence})`);
+        
+        // Rate limit protection: wait 4 seconds between requests (15 RPM = 1 request per 4 seconds)
+        if (i < textAnswers.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 4000));
+        }
       } catch (error) {
         this.logger.error(`Failed to analyze sentiment for answer ${answer.id}:`, error);
+        
+        // If rate limited, wait longer before next attempt
+        if (error.status === 429 && i < textAnswers.length - 1) {
+          this.logger.warn('Rate limit hit, waiting 60 seconds before retry...');
+          await new Promise(resolve => setTimeout(resolve, 60000));
+        }
       }
     }
   }
@@ -367,14 +374,48 @@ export class SurveysService {
       throw new ForbiddenException('Bu anketin AI analizlerini görme yetkiniz yok');
     }
 
+    // Get all TEXT answers
+    const allTextAnswers = survey.responses
+      .flatMap((r: any) => r.answers)
+      .filter((a: any) => a.question?.type === 'TEXT');
+
+    const totalTextResponses = allTextAnswers.length;
+
+    // Find answers that don't have analysis yet
+    const answersWithoutAnalysis = allTextAnswers.filter((a: any) => !a.analysis);
+    
+    // Perform sentiment analysis for answers without analysis
+    if (answersWithoutAnalysis.length > 0) {
+      this.logger.log(`Performing AI analysis on ${answersWithoutAnalysis.length} unanswered TEXT responses`);
+      await this.performSentimentAnalysis(answersWithoutAnalysis);
+      
+      // Refetch the survey with updated analyses
+      const updatedSurvey: any = await this.prisma.survey.findUnique({
+        where: { id: surveyId },
+        include: {
+          questions: true,
+          responses: {
+            include: {
+              answers: {
+                include: {
+                  question: true,
+                  analysis: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      
+      if (updatedSurvey) {
+        survey.responses = updatedSurvey.responses;
+      }
+    }
+
     // Get all TEXT answers with their analyses
     const textAnswers = survey.responses
       .flatMap((r: any) => r.answers)
       .filter((a: any) => a.question?.type === 'TEXT' && a.analysis);
-
-    const totalTextResponses = survey.responses
-      .flatMap((r: any) => r.answers)
-      .filter((a: any) => a.question?.type === 'TEXT').length;
 
     if (textAnswers.length === 0) {
       return {
