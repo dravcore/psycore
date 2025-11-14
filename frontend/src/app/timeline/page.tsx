@@ -6,6 +6,8 @@ import { dashboardApi, Timeline } from '@/lib/api/dashboard';
 import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function TimelinePage() {
   const router = useRouter();
@@ -60,13 +62,12 @@ export default function TimelinePage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start space-x-3">
-            <span className="text-xl">⚠️</span>
-            <div>
-              <p className="text-red-800 font-medium">Hata</p>
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          </div>
+          <Alert variant="destructive">
+            <AlertDescription>
+              <span className="text-xl mr-2">⚠️</span>
+              {error}
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
@@ -113,39 +114,54 @@ export default function TimelinePage() {
 
         {/* Overall Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-            <p className="text-gray-600 text-sm font-medium">Toplam Kayıt</p>
-            <p className="text-4xl font-bold text-blue-600 mt-2">{timeline.overallStats.totalEntries}</p>
-          </div>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Toplam Kayıt</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-blue-600">{timeline.overallStats.totalEntries}</p>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-            <p className="text-gray-600 text-sm font-medium">Baskın Duygu</p>
-            <p className="text-2xl font-bold mt-2" style={{ color: sentimentColors[timeline.overallStats.dominantSentiment] }}>
-              {timeline.overallStats.dominantSentiment === 'positive' && '😊 Pozitif'}
-              {timeline.overallStats.dominantSentiment === 'negative' && '😢 Negatif'}
-              {timeline.overallStats.dominantSentiment === 'neutral' && '😐 Nötr'}
-              {timeline.overallStats.dominantSentiment === 'mixed' && '😕 Karışık'}
-            </p>
-          </div>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Baskın Duygu</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold" style={{ color: sentimentColors[timeline.overallStats.dominantSentiment] }}>
+                {timeline.overallStats.dominantSentiment === 'positive' && '😊 Pozitif'}
+                {timeline.overallStats.dominantSentiment === 'negative' && '😢 Negatif'}
+                {timeline.overallStats.dominantSentiment === 'neutral' && '😐 Nötr'}
+                {timeline.overallStats.dominantSentiment === 'mixed' && '😕 Karışık'}
+              </p>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 md:col-span-2">
-            <p className="text-gray-600 text-sm font-medium mb-3">En Sık Duygular</p>
-            <div className="flex flex-wrap gap-2">
-              {timeline.overallStats.mostFrequentEmotions.slice(0, 5).map((emotion) => (
-                <span
-                  key={emotion.emotion}
-                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-                >
-                  {emotion.emotion} ({emotion.count})
-                </span>
-              ))}
-            </div>
-          </div>
+          <Card className="md:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">En Sık Duygular</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {timeline.overallStats.mostFrequentEmotions.slice(0, 5).map((emotion) => (
+                  <span
+                    key={emotion.emotion}
+                    className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium"
+                  >
+                    {emotion.emotion} ({emotion.count})
+                  </span>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sentiment Trend Chart */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Duygu Durumu Trendi</h2>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Duygu Durumu Trendi</CardTitle>
+          </CardHeader>
+          <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={timeline.sentimentTrend}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -159,11 +175,15 @@ export default function TimelinePage() {
               <Area type="monotone" dataKey="mixed" stackId="1" stroke={sentimentColors.mixed} fill={sentimentColors.mixed} name="Karışık" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Timeline Entries */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Detaylı Kayıtlar</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Detaylı Kayıtlar</CardTitle>
+          </CardHeader>
+          <CardContent>
           <div className="space-y-4">
             {timeline.entries.map((entry, index) => (
               <div
@@ -212,8 +232,8 @@ export default function TimelinePage() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

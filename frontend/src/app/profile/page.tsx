@@ -7,6 +7,11 @@ import Navbar from '@/components/Navbar';
 import authApi, { UserStats } from '@/lib/api/auth';
 import toast from 'react-hot-toast';
 import { ProfileSkeleton } from '@/components/Skeletons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -138,7 +143,7 @@ export default function ProfilePage() {
           <p className="text-gray-600 text-lg">Hesap bilgilerinizi yönetin</p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <Card className="overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-12 relative">
             <div className="flex items-center space-x-6">

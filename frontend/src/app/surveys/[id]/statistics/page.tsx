@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { statisticsApi, SurveyStatistics } from '@/lib/api/statistics';
 import Navbar from '@/components/Navbar';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function StatisticsPage() {
   const params = useParams();
