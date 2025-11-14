@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { OpenAIService } from '../openai/openai.service';
+import { GeminiService } from '../gemini/gemini.service';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { SubmitResponseDto } from './dto/submit-response.dto';
@@ -13,7 +13,7 @@ export class SurveysService {
 
   constructor(
     private prisma: PrismaService,
-    private openAIService: OpenAIService,
+    private geminiService: GeminiService,
   ) {}
 
   async create(userId: string, createSurveyDto: CreateSurveyDto) {
@@ -195,7 +195,7 @@ export class SurveysService {
 
     for (const answer of textAnswers) {
       try {
-        const analysis = await this.openAIService.analyzeSentiment(answer.value);
+        const analysis = await this.geminiService.analyzeSentiment(answer.value);
         
         await this.prisma.sentimentAnalysis.create({
           data: {
@@ -460,7 +460,7 @@ export class SurveysService {
     // Generate AI summary
     let aiSummary: string | undefined;
     try {
-      aiSummary = await this.openAIService.generateInsight({
+      aiSummary = await this.geminiService.generateInsight({
         totalResponses: textAnswers.length,
         sentiments: sentimentCounts,
         topEmotions: commonEmotions.slice(0, 5).map(e => e.emotion),

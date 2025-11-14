@@ -13,21 +13,20 @@ export interface SentimentAnalysisResult {
 }
 
 @Injectable()
-export class OpenAIService {
-  private readonly logger = new Logger(OpenAIService.name);
+export class GeminiService {
+  private readonly logger = new Logger(GeminiService.name);
   private genAI: GoogleGenerativeAI;
   private model: any;
 
   constructor() {
     const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      this.logger.warn('Google AI API key not configured. AI features will be disabled.');
-      return;
+      throw new Error('GOOGLE_AI_API_KEY environment variable is required');
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
-    this.logger.log('Google Gemini 2.0 Flash AI initialized successfully');
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.logger.log('Google Gemini 1.5 Flash AI initialized successfully');
   }
 
   async analyzeSentiment(text: string): Promise<SentimentAnalysisResult> {
