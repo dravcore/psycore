@@ -154,7 +154,7 @@ export default function RegisterPage() {
             </Button>
           </form>
         </CardContent>
-      </div>
+      </Card>
     </div>
   );
 }
