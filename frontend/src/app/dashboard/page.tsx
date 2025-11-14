@@ -66,7 +66,7 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
               Hoş geldin, {user.username}! 👋
             </h1>
-            <p className="text-gray-600 text-lg">İşte bugünkü özet ve hızlı erişimler</p>
+            <p className="text-gray-600 dark:text-slate-300 text-lg">İşte bugünkü özet ve hızlı erişimler</p>
           </div>
 
           {/* Stats Overview */}
