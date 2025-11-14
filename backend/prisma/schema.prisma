@@ -15,13 +15,15 @@ datasource db {
 
 // User model
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String           @id @default(uuid())
+  email     String           @unique
   password  String
   username  String
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      UserRole         @default(USER)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  surveys   Survey[]         @relation("SurveyCreator")
+  responses SurveyResponse[]
 
   @@map("users")
 }
@@ -30,4 +32,73 @@ enum UserRole {
   USER
   ANALYST
   ADMIN
+}
+
+enum QuestionType {
+  RANGE
+  CHOICE
+  YESNO
+  TEXT
+}
+
+model Survey {
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  creatorId   String
+  creator     User             @relation("SurveyCreator", fields: [creatorId], references: [id])
+  questions   Question[]
+  responses   SurveyResponse[]
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("surveys")
+}
+
+model Question {
+  id        String       @id @default(uuid())
+  surveyId  String
+  survey    Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  text      String
+  type      QuestionType
+  order     Int
+  options   String[]
+  required  Boolean      @default(true)
+  minValue  Int?
+  maxValue  Int?
+  answers   Answer[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([surveyId, order])
+  @@map("questions")
+}
+
+model SurveyResponse {
+  id          String   @id @default(uuid())
+  surveyId    String
+  survey      Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  answers     Answer[]
+  completedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@unique([surveyId, userId])
+  @@map("survey_responses")
+}
+
+model Answer {
+  id         String         @id @default(uuid())
+  questionId String
+  question   Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  responseId String
+  response   SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  value      String
+  createdAt  DateTime       @default(now())
+
+  @@index([questionId])
+  @@index([responseId])
+  @@map("answers")
 }
