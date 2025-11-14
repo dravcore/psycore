@@ -26,8 +26,8 @@ export class OpenAIService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    this.logger.log('Google Gemini AI initialized successfully');
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    this.logger.log('Google Gemini 2.0 Flash AI initialized successfully');
   }
 
   async analyzeSentiment(text: string): Promise<SentimentAnalysisResult> {
