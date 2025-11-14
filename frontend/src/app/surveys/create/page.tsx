@@ -77,7 +77,7 @@ export default function CreateSurveyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -89,7 +89,7 @@ export default function CreateSurveyPage() {
 
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold">
               Yeni Anket Oluştur
             </h1>
             <p className="text-gray-600 mt-2">Kendi psikolojik değerlendirme anketinizi oluşturun</p>

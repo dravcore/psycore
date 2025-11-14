@@ -62,7 +62,7 @@ export function ProfileSkeleton() {
         {/* Profile Card */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 overflow-hidden">
           {/* Banner */}
-          <div className="h-32 bg-gradient-to-r from-blue-600 to-purple-600"></div>
+          <div className="h-32 bg-primary"></div>
           
           {/* Content */}
           <div className="px-8 py-8 space-y-6">

@@ -65,17 +65,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Welcome Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+            <h1 className="text-4xl font-bold mb-2">
               Hoş geldin, {user.username}! 👋
             </h1>
-            <p className="text-gray-600 dark:text-slate-300 text-lg">İşte bugünkü özet ve hızlı erişimler</p>
+            <p className="text-muted-foreground text-lg">İşte bugünkü özet ve hızlı erişimler</p>
           </div>
 
           {/* Stats Overview */}
@@ -87,7 +87,7 @@ export default function DashboardPage() {
                   <span className="text-4xl">📝</span>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-4xl font-bold text-blue-600">{stats.totalSurveys}</div>
+                  <div className="text-4xl font-bold text-foreground">{stats.totalSurveys}</div>
                   <p className="text-xs text-muted-foreground mt-1">{stats.activeSurveys} aktif</p>
                 </CardContent>
               </Card>
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                   <span className="text-4xl">💬</span>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-4xl font-bold text-purple-600">{stats.totalResponses}</div>
+                  <div className="text-4xl font-bold text-foreground">{stats.totalResponses}</div>
                 </CardContent>
               </Card>
 
@@ -108,7 +108,7 @@ export default function DashboardPage() {
                   <span className="text-4xl">🤖</span>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-4xl font-bold text-indigo-600">{stats.analyzedResponses}</div>
+                  <div className="text-4xl font-bold text-foreground">{stats.analyzedResponses}</div>
                   <p className="text-xs text-muted-foreground mt-1">{stats.totalTextResponses} metin</p>
                 </CardContent>
               </Card>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   {stats.sentimentOverview && (
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-foreground">
                       {Math.round((stats.sentimentOverview.positive / (stats.sentimentOverview.positive + stats.sentimentOverview.negative + stats.sentimentOverview.neutral + stats.sentimentOverview.mixed)) * 100)}% +
                     </div>
                   )}
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-4xl">➕</span>
-                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -151,7 +151,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-4xl">📝</span>
-                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-4xl">📈</span>
-                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -226,15 +226,15 @@ export default function DashboardPage() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Oluşturulan Anketler</span>
-                        <span className="text-2xl font-bold text-purple-600">0</span>
+                        <span className="text-2xl font-bold text-foreground">0</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Cevaplanan Anketler</span>
-                        <span className="text-2xl font-bold text-purple-600">0</span>
+                        <span className="text-2xl font-bold text-foreground">0</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Toplam Puan</span>
-                        <span className="text-2xl font-bold text-purple-600">0</span>
+                        <span className="text-2xl font-bold text-foreground">0</span>
                       </div>
                     </div>
                   </CardContent>

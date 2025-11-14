@@ -61,15 +61,15 @@ export default function SettingsPage() {
   if (!hydrated || !user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+          <h1 className="text-4xl font-bold mb-2">
             ⚙️ Ayarlar
           </h1>
-          <p className="text-gray-600 text-lg">Uygulama tercihlerinizi yönetin</p>
+          <p className="text-muted-foreground text-lg">Uygulama tercihlerinizi yönetin</p>
         </div>
 
         {/* Notification Settings */}
@@ -148,21 +148,21 @@ export default function SettingsPage() {
                 <Button
                   variant={preferences.theme === 'light' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'light')}
-                  className={`flex-1 ${preferences.theme === 'light' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
+                  className="flex-1"
                 >
                   ☀️ Açık
                 </Button>
                 <Button
                   variant={preferences.theme === 'dark' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'dark')}
-                  className={`flex-1 ${preferences.theme === 'dark' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
+                  className="flex-1"
                 >
                   🌙 Koyu
                 </Button>
                 <Button
                   variant={preferences.theme === 'auto' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'auto')}
-                  className={`flex-1 ${preferences.theme === 'auto' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
+                  className="flex-1"
                 >
                   🔄 Otomatik
                 </Button>

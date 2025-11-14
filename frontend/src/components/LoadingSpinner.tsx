@@ -24,7 +24,7 @@ export default function LoadingSpinner({ size = 'md', fullScreen = false }: Load
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
         {spinner}
       </div>
     );

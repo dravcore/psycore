@@ -124,7 +124,7 @@ export default function ProfilePage() {
 
   if (statsLoading && !stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <ProfileSkeleton />
       </div>
@@ -132,27 +132,27 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+          <h1 className="text-4xl font-bold mb-2">
             👤 Profil
           </h1>
-          <p className="text-gray-600 text-lg">Hesap bilgilerinizi yönetin</p>
+          <p className="text-muted-foreground text-lg">Hesap bilgilerinizi yönetin</p>
         </div>
 
         <Card className="overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-12 relative">
+          <div className="bg-primary px-8 py-12 relative">
             <div className="flex items-center space-x-6">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-purple-600 shadow-xl">
+              <div className="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold text-primary shadow-xl">
                 {getInitials(user.username)}
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-white">{user.username}</h2>
-                <p className="text-blue-100 mt-1">{user.email}</p>
+                <p className="text-primary-foreground/80 mt-1">{user.email}</p>
               </div>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function ProfilePage() {
               <h3 className="text-xl font-semibold text-gray-800">Hesap Bilgileri</h3>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                className="px-4 py-2 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 {isEditing ? '❌ İptal' : '✏️ Düzenle'}
               </button>
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                   Rol
                 </label>
                 <p className="text-gray-900 text-lg font-medium px-4 py-3 bg-gray-50 rounded-xl inline-block">
-                  <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 rounded-lg">
+                  <span className="px-3 py-1 bg-muted rounded-lg">
                     {user.role || 'USER'}
                   </span>
                 </p>
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                   <button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                    className="px-6 py-3 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
                   >
                     {loading ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
                   </button>
@@ -252,11 +252,11 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl p-4 shadow-md">
                   <p className="text-sm text-gray-600">Oluşturulan Anket</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-2">{stats?.totalSurveysCreated || 0}</p>
+                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.totalSurveysCreated || 0}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-md">
                   <p className="text-sm text-gray-600">Verilen Yanıt</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-2">{stats?.totalResponsesGiven || 0}</p>
+                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.totalResponsesGiven || 0}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-md">
                   <p className="text-sm text-gray-600">AI Analizi</p>
@@ -264,7 +264,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="bg-white rounded-xl p-4 shadow-md">
                   <p className="text-sm text-gray-600">Üyelik Süresi</p>
-                  <p className="text-3xl font-bold text-indigo-600 mt-2">{stats?.membershipDays || 0} <span className="text-sm font-normal">gün</span></p>
+                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.membershipDays || 0} <span className="text-sm font-normal">gün</span></p>
                 </div>
               </div>
             )}

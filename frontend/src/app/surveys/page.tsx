@@ -81,21 +81,20 @@ export default function SurveysPage() {
   if (!hydrated || !user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 mb-8">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Anketler</h1>
-              <p className="text-gray-600 mt-2">Tüm anketleri görüntüleyin ve yönetin ({filteredSurveys.length} anket)</p>
+              <h1 className="text-4xl font-bold">Anketler</h1>
+              <p className="text-muted-foreground mt-2">Tüm anketleri görüntüleyin ve yönetin ({filteredSurveys.length} anket)</p>
             </div>
             <Link href="/surveys/create">
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button>
                 <span className="text-xl mr-2">+</span>
                 Yeni Anket Oluştur
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </Button>
             </Link>
           </div>
@@ -131,27 +130,25 @@ export default function SurveysPage() {
                   <Button
                     variant={filterStatus === 'all' ? 'default' : 'outline'}
                     onClick={() => setFilterStatus('all')}
-                    className={filterStatus === 'all' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}
                   >
                     Tümü
                   </Button>
                   <Button
                     variant={filterStatus === 'active' ? 'default' : 'outline'}
                     onClick={() => setFilterStatus('active')}
-                    className={filterStatus === 'active' ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' : ''}
                   >
                     ✓ Aktif
                   </Button>
                   <Button
                     variant={filterStatus === 'inactive' ? 'default' : 'outline'}
                     onClick={() => setFilterStatus('inactive')}
-                    className={filterStatus === 'inactive' ? 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800' : ''}
                   >
                     ○ Pasif
                   </Button>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
@@ -187,7 +184,7 @@ export default function SurveysPage() {
                       <CardTitle className="group-hover:text-blue-600 transition-colors">
                         {survey.title}
                       </CardTitle>
-                      <Badge variant={survey.isActive ? 'default' : 'secondary'} className={survey.isActive ? 'bg-green-600' : ''}>
+                      <Badge variant={survey.isActive ? 'default' : 'secondary'}>
                         {survey.isActive ? '✓ Aktif' : '○ Pasif'}
                       </Badge>
                     </div>
@@ -209,7 +206,7 @@ export default function SurveysPage() {
                     <div className="space-y-2">
                       <div className="flex space-x-2">
                         <Link href={`/surveys/${survey.id}`} className="flex-1">
-                          <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                          <Button className="w-full">
                             Görüntüle
                           </Button>
                         </Link>
@@ -228,7 +225,7 @@ export default function SurveysPage() {
                       {user.id === survey.creatorId && (survey._count?.responses || 0) > 0 && (
                         <Tooltip content="Anket sonuçlarını ve istatistikleri görüntüle">
                           <Link href={`/surveys/${survey.id}/statistics`} className="block">
-                            <Button variant="outline" className="w-full text-emerald-700 border-emerald-200 hover:bg-emerald-50">
+                            <Button variant="outline" className="w-full">
                               <span className="mr-2">📊</span>
                               İstatistikleri Gör
                             </Button>

@@ -48,7 +48,7 @@ export default function TimelinePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="flex items-center justify-center h-[80vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -59,7 +59,7 @@ export default function TimelinePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Alert variant="destructive">
@@ -75,7 +75,7 @@ export default function TimelinePage() {
 
   if (!timeline || timeline.entries.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
@@ -98,16 +98,16 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+          <h1 className="text-4xl font-bold mb-2">
             📈 Ruh Hali Zaman Çizelgesi
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-muted-foreground text-lg">
             {new Date(timeline.overallStats.dateRange.start).toLocaleDateString('tr-TR')} - {new Date(timeline.overallStats.dateRange.end).toLocaleDateString('tr-TR')}
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function TimelinePage() {
               <CardTitle className="text-sm font-medium text-muted-foreground">Toplam Kayıt</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold text-blue-600">{timeline.overallStats.totalEntries}</p>
+              <p className="text-4xl font-bold text-foreground">{timeline.overallStats.totalEntries}</p>
             </CardContent>
           </Card>
 
@@ -146,7 +146,7 @@ export default function TimelinePage() {
                 {timeline.overallStats.mostFrequentEmotions.slice(0, 5).map((emotion) => (
                   <span
                     key={emotion.emotion}
-                    className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium"
+                    className="px-3 py-1 bg-muted text-foreground rounded-full text-sm font-medium"
                   >
                     {emotion.emotion} ({emotion.count})
                   </span>
@@ -214,7 +214,7 @@ export default function TimelinePage() {
                       {entry.emotions.slice(0, 3).map((emotion, idx) => (
                         <span
                           key={idx}
-                          className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded"
+                          className="text-xs bg-muted text-foreground px-2 py-0.5 rounded"
                         >
                           {emotion.emotion} ({Math.round(emotion.intensity * 100)}%)
                         </span>

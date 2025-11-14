@@ -46,10 +46,10 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center space-x-8">
             <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
                 <span className="text-xl">🧠</span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold">
                 PsyCore
               </span>
             </Link>
@@ -97,7 +97,7 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors group"
               >
-                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md group-hover:shadow-lg transition-shadow">
+                <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white font-semibold shadow-md group-hover:shadow-lg transition-shadow">
                   {getInitials(user.username)}
                 </div>
                 <div className="hidden md:block text-left">
@@ -132,11 +132,11 @@ export default function Navbar() {
                   <div className="py-2">
                     <Link
                       href="/profile"
-                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/30 dark:hover:to-purple-950/30 transition-colors group"
+                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-accent transition-colors group"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <svg
-                        className="w-5 h-5 mr-3 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -153,11 +153,11 @@ export default function Navbar() {
 
                     <Link
                       href="/surveys"
-                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/30 dark:hover:to-purple-950/30 transition-colors group"
+                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-accent transition-colors group"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <svg
-                        className="w-5 h-5 mr-3 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -174,11 +174,11 @@ export default function Navbar() {
 
                     <Link
                       href="/surveys/create"
-                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/30 dark:hover:to-purple-950/30 transition-colors group"
+                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-accent transition-colors group"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <svg
-                        className="w-5 h-5 mr-3 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -195,11 +195,11 @@ export default function Navbar() {
 
                     <Link
                       href="/settings"
-                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/30 dark:hover:to-purple-950/30 transition-colors group"
+                      className="flex items-center px-4 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-accent transition-colors group"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <svg
-                        className="w-5 h-5 mr-3 text-gray-600 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                        className="w-5 h-5 mr-3 text-muted-foreground group-hover:text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
