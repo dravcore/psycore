@@ -84,15 +84,45 @@ export default function StatisticsPage() {
               </h1>
               <p className="text-gray-600 text-lg">{statistics.title}</p>
             </div>
-            <Link
-              href={`/surveys/${surveyId}/ai-insights`}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2"
-            >
-              <span>🤖</span>
-              <span className="font-medium">
-                {statistics.hasAIAnalysis ? 'Analiz Sonuçlarını Gör' : 'AI Analizi Yap'}
-              </span>
-            </Link>
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/surveys/${surveyId}/export`, {
+                      headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                      },
+                    });
+                    const data = await response.json();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${statistics.title.replace(/\s+/g, '_')}_export.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Dışa aktarma başarısız oldu');
+                  }
+                }}
+                className="px-4 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-xl hover:bg-blue-50 transition-all flex items-center gap-2"
+              >
+                <span>📥</span>
+                <span className="font-medium">Dışa Aktar</span>
+              </button>
+              <Link
+                href={`/surveys/${surveyId}/ai-insights`}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2"
+              >
+                <span>🤖</span>
+                <span className="font-medium">
+                  {statistics.hasAIAnalysis ? 'Analiz Sonuçlarını Gör' : 'AI Analizi Yap'}
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
 

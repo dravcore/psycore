@@ -146,17 +146,17 @@ export default function DashboardPage() {
             </Link>
 
             <Link
-              href="/profile"
+              href="/timeline"
               className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all transform hover:-translate-y-1"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-4xl">👤</span>
+                <span className="text-4xl">📈</span>
                 <svg className="w-6 h-6 text-gray-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
-              <h3 className="font-bold text-gray-900 mb-1">Profil Ayarları</h3>
-              <p className="text-sm text-gray-600">Bilgilerinizi düzenleyin</p>
+              <h3 className="font-bold text-gray-900 mb-1">Ruh Hali Çizelgesi</h3>
+              <p className="text-sm text-gray-600">Duygusal trend analizi</p>
             </Link>
           </div>
 
