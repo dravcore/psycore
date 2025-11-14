@@ -359,11 +359,28 @@ export class SurveysService {
 
     const hasAIAnalysis = textAnswersCount > 0 && analyzedAnswersCount > 0;
 
+    // Calculate completion rate
+    const totalQuestions = survey.questions.length;
+    let completedResponses = 0;
+
+    if (totalQuestions > 0) {
+      survey.responses.forEach(response => {
+        const answeredQuestions = response.answers.length;
+        if (answeredQuestions >= totalQuestions) {
+          completedResponses++;
+        }
+      });
+    }
+
+    const completionRate = totalResponses > 0 
+      ? Math.round((completedResponses / totalResponses) * 100) 
+      : 0;
+
     return {
       surveyId: survey.id,
       title: survey.title,
       totalResponses,
-      completionRate: 100, // TODO: Calculate based on started vs completed
+      completionRate,
       questions: questionStats,
       createdAt: survey.createdAt,
       lastResponseAt: lastResponse,

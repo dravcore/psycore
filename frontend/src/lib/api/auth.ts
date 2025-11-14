@@ -32,6 +32,13 @@ const authApi = {
     const response = await axiosInstance.get('/auth/stats');
     return response.data;
   },
+
+  deleteAccount: async (password: string): Promise<{ message: string }> => {
+    const response = await axiosInstance.delete('/auth/account', {
+      data: { password },
+    });
+    return response.data;
+  },
 };
 
 export default authApi;

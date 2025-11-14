@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Get, Put, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put, Delete, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -41,5 +42,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async getUserStats(@Request() req) {
     return this.authService.getUserStats(req.user.id);
+  }
+
+  @Delete('account')
+  @UseGuards(JwtAuthGuard)
+  async deleteAccount(@Request() req, @Body() dto: DeleteAccountDto) {
+    return this.authService.deleteAccount(req.user.id, dto.password);
   }
 }

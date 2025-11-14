@@ -1,21 +1,48 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import Navbar from '@/components/Navbar';
+import authApi from '@/lib/api/auth';
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const { preferences, updatePreference } = useSettingsStore();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (!user) {
       router.push('/login');
     }
   }, [user, router]);
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      alert('❌ Şifrenizi girin!');
+      return;
+    }
+
+    if (!confirm('⚠️ Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+      return;
+    }
+
+    setDeleteLoading(true);
+    try {
+      await authApi.deleteAccount(deletePassword);
+      clearAuth();
+      router.push('/');
+      alert('✅ Hesabınız başarıyla silindi.');
+    } catch (error: any) {
+      alert(error.response?.data?.message || '❌ Hesap silinirken bir hata oluştu');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   if (!user) return null;
 
@@ -167,9 +194,58 @@ export default function SettingsPage() {
           <p className="text-red-700 mb-6">
             Bu işlemler geri alınamaz. Lütfen dikkatli olun.
           </p>
-          <button className="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-lg">
-            🗑️ Hesabı Sil
-          </button>
+          
+          {!showDeleteModal ? (
+            <button 
+              onClick={() => setShowDeleteModal(true)}
+              className="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-lg"
+            >
+              🗑️ Hesabı Sil
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <div className="p-4 bg-red-100 border border-red-300 rounded-xl">
+                <p className="font-semibold text-red-900 mb-2">⚠️ Dikkat!</p>
+                <p className="text-sm text-red-800">
+                  Hesabınızı silmek için şifrenizi girin. Bu işlem tüm anketlerinizi, 
+                  yanıtlarınızı ve analizlerinizi kalıcı olarak silecektir.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-red-800 mb-2">
+                  Şifrenizi Girin
+                </label>
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-red-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeletePassword('');
+                  }}
+                  disabled={deleteLoading}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteLoading}
+                  className="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50"
+                >
+                  {deleteLoading ? '⏳ Siliniyor...' : '🗑️ Hesabı Kalıcı Olarak Sil'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

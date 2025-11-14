@@ -181,6 +181,29 @@ export class AuthService {
     return updatedUser;
   }
 
+  async deleteAccount(userId: string, password: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Verify password before deletion
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Password is incorrect');
+    }
+
+    // Delete user (cascade will delete all related data)
+    await this.prisma.user.delete({
+      where: { id: userId },
+    });
+
+    return { message: 'Account deleted successfully' };
+  }
+
   async getUserStats(userId: string): Promise<UserStatsDto> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
