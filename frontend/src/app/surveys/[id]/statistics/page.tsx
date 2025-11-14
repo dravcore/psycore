@@ -177,25 +177,33 @@ export default function StatisticsPage() {
               {/* Distribution chart */}
               {question.distribution && (
                 <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-3">Dağılım</p>
+                  <p className="text-sm font-medium text-gray-700 mb-3">
+                    {question.type === 'YESNO' ? 'Evet/Hayır Dağılımı' : 'Dağılım'}
+                  </p>
                   <div className="space-y-2">
                     {Object.entries(question.distribution).map(([value, count]) => {
                       const percentage = (count / question.totalResponses) * 100;
+                      const emoji = question.type === 'YESNO' 
+                        ? (value.toLowerCase() === 'evet' || value.toLowerCase() === 'yes' ? '✅' : '❌')
+                        : '';
                       return (
                         <div key={value} className="flex items-center">
-                          <span className="text-sm text-gray-600 w-20">{value}</span>
-                          <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
+                          <span className="text-sm text-gray-700 font-medium w-24 capitalize flex items-center">
+                            {emoji && <span className="mr-1">{emoji}</span>}
+                            {value}
+                          </span>
+                          <div className="flex-1 bg-gray-200 rounded-full h-7 overflow-hidden">
                             <div
-                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full flex items-center justify-end px-2 transition-all"
+                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full flex items-center justify-end px-3 transition-all"
                               style={{ width: `${percentage}%` }}
                             >
-                              <span className="text-xs text-white font-medium">
+                              <span className="text-xs text-white font-semibold">
                                 {percentage.toFixed(1)}%
                               </span>
                             </div>
                           </div>
-                          <span className="text-sm text-gray-600 w-12 text-right ml-2">
-                            {count}
+                          <span className="text-sm text-gray-600 w-16 text-right ml-3 font-medium">
+                            {count} kişi
                           </span>
                         </div>
                       );

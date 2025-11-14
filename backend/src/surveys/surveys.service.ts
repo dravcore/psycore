@@ -260,6 +260,14 @@ export class SurveysService {
           });
           stat.distribution = distribution;
         }
+      } else if (question.type === 'YESNO') {
+        // Yes/No distribution
+        const distribution: { [key: string]: number } = {};
+        answers.forEach(a => {
+          const normalized = a.value.toLowerCase().trim();
+          distribution[normalized] = (distribution[normalized] || 0) + 1;
+        });
+        stat.distribution = distribution;
       } else if (question.type === 'TEXT') {
         // Most common text answers
         const textCounts: { [key: string]: number } = {};
