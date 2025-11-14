@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 export interface SentimentAnalysisResult {
   sentiment: 'positive' | 'negative' | 'neutral' | 'mixed';
@@ -15,8 +15,7 @@ export interface SentimentAnalysisResult {
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private ai: GoogleGenAI;
 
   constructor() {
     const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.OPENAI_API_KEY;
@@ -24,13 +23,12 @@ export class GeminiService {
       throw new Error('GOOGLE_AI_API_KEY environment variable is required');
     }
 
-    this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    this.logger.log('Google Gemini 1.5 Flash AI initialized successfully');
+    this.ai = new GoogleGenAI({ apiKey });
+    this.logger.log('Google Gemini 2.0 Flash Lite AI initialized successfully');
   }
 
   async analyzeSentiment(text: string): Promise<SentimentAnalysisResult> {
-    if (!this.model) {
+    if (!this.ai) {
       throw new Error('Google AI not configured');
     }
 
@@ -56,10 +54,12 @@ Odaklan:
 - Psikolojik göstergeler
 - Kısa profesyonel özet (Türkçe)`;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const content = response.text();
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.0-flash-lite',
+        contents: prompt,
+      });
 
+      const content = response.text;
       if (!content) {
         throw new Error('No content in Gemini response');
       }
@@ -107,7 +107,7 @@ Odaklan:
   }
 
   async generateInsight(analysisData: any): Promise<string> {
-    if (!this.model) {
+    if (!this.ai) {
       throw new Error('Google AI not configured');
     }
 
@@ -120,10 +120,12 @@ ${JSON.stringify(analysisData, null, 2)}
 
 Kullanıcının duygusal durumunu veya kişilik özelliklerini anlamasına yardımcı olacak kısa, profesyonel bir içgörü sun (2-3 cümle, Türkçe).`;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const content = response.text();
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.0-flash-lite',
+        contents: prompt,
+      });
 
+      const content = response.text;
       if (!content) {
         throw new Error('No content in Gemini response');
       }
