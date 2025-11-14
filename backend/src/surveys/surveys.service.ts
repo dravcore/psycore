@@ -6,6 +6,8 @@ import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { SubmitResponseDto } from './dto/submit-response.dto';
 import { SurveyStatisticsDto, QuestionStatistics } from './dto/survey-statistics.dto';
 import { AIInsightsDto, SentimentAnalysisDto } from './dto/ai-insights.dto';
+import { DashboardStatsDto } from './dto/dashboard-stats.dto';
+import { TimelineDto, TimelineEntryDto } from './dto/timeline.dto';
 
 @Injectable()
 export class SurveysService {
@@ -543,6 +545,268 @@ export class SurveysService {
       topKeywords,
       analyses,
       aiSummary,
+    };
+  }
+
+  async getDashboardStats(userId: string): Promise<DashboardStatsDto> {
+    // Get all user's surveys with responses
+    const surveys = await this.prisma.survey.findMany({
+      where: { creatorId: userId },
+      include: {
+        questions: true,
+        responses: {
+          include: {
+            answers: {
+              include: {
+                question: true,
+                analysis: true,
+              },
+            },
+          },
+          orderBy: { completedAt: 'desc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const totalSurveys = surveys.length;
+    const activeSurveys = surveys.filter(s => s.isActive).length;
+    
+    // Calculate total responses
+    const totalResponses = surveys.reduce((sum, survey) => sum + survey.responses.length, 0);
+    
+    // Get all text answers
+    const allTextAnswers = surveys.flatMap(survey => 
+      survey.responses.flatMap(response => 
+        response.answers.filter(answer => answer.question?.type === 'TEXT')
+      )
+    );
+    
+    const totalTextResponses = allTextAnswers.length;
+    const analyzedResponses = allTextAnswers.filter(answer => answer.analysis).length;
+
+    // Recent activity (last 5 surveys with responses)
+    const recentActivity = surveys
+      .filter(survey => survey.responses.length > 0)
+      .slice(0, 5)
+      .map(survey => ({
+        surveyId: survey.id,
+        surveyTitle: survey.title,
+        responseCount: survey.responses.length,
+        lastResponseAt: survey.responses[0]?.completedAt || survey.createdAt,
+      }));
+
+    // Overall sentiment distribution
+    const sentimentCounts = {
+      positive: 0,
+      negative: 0,
+      neutral: 0,
+      mixed: 0,
+    };
+
+    const emotionCounts: { [key: string]: number } = {};
+
+    allTextAnswers.forEach(answer => {
+      if (answer.analysis) {
+        const sentiment = answer.analysis.sentiment as keyof typeof sentimentCounts;
+        if (sentiment in sentimentCounts) {
+          sentimentCounts[sentiment]++;
+        }
+
+        // Count emotions
+        if (Array.isArray(answer.analysis.emotions)) {
+          answer.analysis.emotions.forEach((e: any) => {
+            emotionCounts[e.emotion] = (emotionCounts[e.emotion] || 0) + 1;
+          });
+        }
+      }
+    });
+
+    const topEmotions = Object.entries(emotionCounts)
+      .map(([emotion, count]) => ({ emotion, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    // Surveys with most responses
+    const surveysWithMostResponses = surveys
+      .map(survey => {
+        const textAnswerCount = survey.responses.flatMap(r => 
+          r.answers.filter(a => a.question?.type === 'TEXT')
+        ).length;
+        
+        const analyzedCount = survey.responses.flatMap(r => 
+          r.answers.filter(a => a.question?.type === 'TEXT' && a.analysis)
+        ).length;
+
+        return {
+          surveyId: survey.id,
+          title: survey.title,
+          responseCount: survey.responses.length,
+          hasAIAnalysis: textAnswerCount > 0 && analyzedCount > 0,
+        };
+      })
+      .sort((a, b) => b.responseCount - a.responseCount)
+      .slice(0, 5);
+
+    return {
+      totalSurveys,
+      activeSurveys,
+      totalResponses,
+      totalTextResponses,
+      analyzedResponses,
+      recentActivity,
+      sentimentOverview: analyzedResponses > 0 ? sentimentCounts : undefined,
+      topEmotions: topEmotions.length > 0 ? topEmotions : undefined,
+      surveysWithMostResponses,
+    };
+  }
+
+  async getTimeline(userId: string, startDate?: Date, endDate?: Date): Promise<TimelineDto> {
+    // Build date filter
+    const dateFilter: any = {};
+    if (startDate) dateFilter.gte = startDate;
+    if (endDate) dateFilter.lte = endDate;
+
+    // Get all analyzed answers for the user
+    const analyses = await this.prisma.sentimentAnalysis.findMany({
+      where: {
+        answer: {
+          response: {
+            survey: {
+              creatorId: userId,
+            },
+          },
+          ...(Object.keys(dateFilter).length > 0 && {
+            response: {
+              completedAt: dateFilter,
+            },
+          }),
+        },
+      },
+      include: {
+        answer: {
+          include: {
+            question: true,
+            response: {
+              include: {
+                survey: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    if (analyses.length === 0) {
+      return {
+        entries: [],
+        sentimentTrend: [],
+        emotionTrend: [],
+        overallStats: {
+          totalEntries: 0,
+          dateRange: { start: new Date(), end: new Date() },
+          dominantSentiment: 'neutral',
+          mostFrequentEmotions: [],
+        },
+      };
+    }
+
+    // Map to timeline entries
+    const entries: TimelineEntryDto[] = analyses.map(analysis => ({
+      date: analysis.answer.response.completedAt,
+      surveyId: analysis.answer.response.survey.id,
+      surveyTitle: analysis.answer.response.survey.title,
+      questionText: analysis.answer.question.text,
+      answerValue: analysis.answer.value,
+      sentiment: analysis.sentiment as any,
+      confidence: analysis.confidence,
+      emotions: Array.isArray(analysis.emotions) 
+        ? (analysis.emotions as any[]).map(e => ({
+            emotion: e.emotion,
+            intensity: e.intensity,
+          }))
+        : [],
+      summary: analysis.summary,
+    }));
+
+    // Group by date for trends
+    const dateGroups: { [date: string]: typeof analyses } = {};
+    analyses.forEach(analysis => {
+      const dateKey = analysis.answer.response.completedAt.toISOString().split('T')[0];
+      if (!dateGroups[dateKey]) dateGroups[dateKey] = [];
+      dateGroups[dateKey].push(analysis);
+    });
+
+    // Calculate sentiment trend
+    const sentimentTrend = Object.entries(dateGroups).map(([date, items]) => {
+      const counts = { positive: 0, negative: 0, neutral: 0, mixed: 0 };
+      items.forEach(item => {
+        const sentiment = item.sentiment as keyof typeof counts;
+        if (sentiment in counts) counts[sentiment]++;
+      });
+      return { date, ...counts };
+    });
+
+    // Calculate emotion trend
+    const emotionTrend = Object.entries(dateGroups).map(([date, items]) => {
+      const emotionMap: { [emotion: string]: number[] } = {};
+      
+      items.forEach(item => {
+        if (Array.isArray(item.emotions)) {
+          (item.emotions as any[]).forEach(e => {
+            if (!emotionMap[e.emotion]) emotionMap[e.emotion] = [];
+            emotionMap[e.emotion].push(e.intensity);
+          });
+        }
+      });
+
+      const emotions = Object.entries(emotionMap).map(([emotion, intensities]) => ({
+        emotion,
+        avgIntensity: intensities.reduce((a, b) => a + b, 0) / intensities.length,
+      }));
+
+      return { date, emotions };
+    });
+
+    // Calculate overall stats
+    const sentimentCounts = { positive: 0, negative: 0, neutral: 0, mixed: 0 };
+    const emotionCounts: { [emotion: string]: number } = {};
+
+    analyses.forEach(analysis => {
+      const sentiment = analysis.sentiment as keyof typeof sentimentCounts;
+      if (sentiment in sentimentCounts) sentimentCounts[sentiment]++;
+
+      if (Array.isArray(analysis.emotions)) {
+        (analysis.emotions as any[]).forEach(e => {
+          emotionCounts[e.emotion] = (emotionCounts[e.emotion] || 0) + 1;
+        });
+      }
+    });
+
+    const dominantSentiment = Object.entries(sentimentCounts)
+      .sort(([, a], [, b]) => b - a)[0][0] as any;
+
+    const mostFrequentEmotions = Object.entries(emotionCounts)
+      .map(([emotion, count]) => ({ emotion, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    return {
+      entries,
+      sentimentTrend,
+      emotionTrend,
+      overallStats: {
+        totalEntries: entries.length,
+        dateRange: {
+          start: analyses[0].answer.response.completedAt,
+          end: analyses[analyses.length - 1].answer.response.completedAt,
+        },
+        dominantSentiment,
+        mostFrequentEmotions,
+      },
     };
   }
 }

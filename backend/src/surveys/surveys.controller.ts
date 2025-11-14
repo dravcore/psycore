@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { SurveysService } from './surveys.service';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
@@ -19,6 +19,24 @@ export class SurveysController {
   @Get()
   findAll(@Request() req: any) {
     return this.surveysService.findAll(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('dashboard/stats')
+  getDashboardStats(@Request() req) {
+    return this.surveysService.getDashboardStats(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('dashboard/timeline')
+  getTimeline(
+    @Request() req,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    const start = startDate ? new Date(startDate) : undefined;
+    const end = endDate ? new Date(endDate) : undefined;
+    return this.surveysService.getTimeline(req.user.userId, start, end);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -61,5 +79,40 @@ export class SurveysController {
   @Get(':id/ai-insights')
   getAIInsights(@Param('id') id: string, @Request() req) {
     return this.surveysService.getAIInsights(id, req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/export')
+  async exportSurvey(@Param('id') id: string, @Request() req, @Query('format') format: string = 'json') {
+    const [statistics, aiInsights] = await Promise.all([
+      this.surveysService.getStatistics(id, req.user.userId),
+      this.surveysService.getAIInsights(id, req.user.userId).catch(() => null),
+    ]);
+
+    const exportData = {
+      survey: {
+        id: statistics.surveyId,
+        title: statistics.title,
+        createdAt: statistics.createdAt,
+        lastResponseAt: statistics.lastResponseAt,
+      },
+      statistics: {
+        totalResponses: statistics.totalResponses,
+        completionRate: statistics.completionRate,
+        questions: statistics.questions,
+      },
+      aiInsights: aiInsights ? {
+        totalTextResponses: aiInsights.totalTextResponses,
+        analyzedResponses: aiInsights.analyzedResponses,
+        overallSentiment: aiInsights.overallSentiment,
+        averageConfidence: aiInsights.averageConfidence,
+        commonEmotions: aiInsights.commonEmotions,
+        topKeywords: aiInsights.topKeywords,
+        aiSummary: aiInsights.aiSummary,
+      } : null,
+      exportedAt: new Date(),
+    };
+
+    return exportData;
   }
 }
