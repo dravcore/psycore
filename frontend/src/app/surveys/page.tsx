@@ -11,6 +11,11 @@ import EmptyState from '@/components/EmptyState';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import Tooltip from '@/components/Tooltip';
 import { useNotificationStore } from '@/store/notificationStore';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function SurveysPage() {
   const router = useRouter();
@@ -86,73 +91,64 @@ export default function SurveysPage() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Anketler</h1>
               <p className="text-gray-600 mt-2">Tüm anketleri görüntüleyin ve yönetin ({filteredSurveys.length} anket)</p>
             </div>
-            <Link
-              href="/surveys/create"
-              className="group px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold flex items-center justify-center"
-            >
-              <span className="text-xl mr-2">+</span>
-              Yeni Anket Oluştur
-              <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            <Link href="/surveys/create">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <span className="text-xl mr-2">+</span>
+                Yeni Anket Oluştur
+                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </Button>
             </Link>
           </div>
 
           {/* Search and Filter */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  placeholder="Anket ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-                <svg
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Input
+                    type="text"
+                    placeholder="Anket ara..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
                   />
-                </svg>
-              </div>
+                  <svg
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setFilterStatus('all')}
-                  className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                    filterStatus === 'all'
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Tümü
-                </button>
-                <button
-                  onClick={() => setFilterStatus('active')}
-                  className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                    filterStatus === 'active'
-                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  ✓ Aktif
-                </button>
-                <button
-                  onClick={() => setFilterStatus('inactive')}
-                  className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                    filterStatus === 'inactive'
-                      ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  ○ Pasif
-                </button>
+                <div className="flex gap-2">
+                  <Button
+                    variant={filterStatus === 'all' ? 'default' : 'outline'}
+                    onClick={() => setFilterStatus('all')}
+                    className={filterStatus === 'all' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}
+                  >
+                    Tümü
+                  </Button>
+                  <Button
+                    variant={filterStatus === 'active' ? 'default' : 'outline'}
+                    onClick={() => setFilterStatus('active')}
+                    className={filterStatus === 'active' ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' : ''}
+                  >
+                    ✓ Aktif
+                  </Button>
+                  <Button
+                    variant={filterStatus === 'inactive' ? 'default' : 'outline'}
+                    onClick={() => setFilterStatus('inactive')}
+                    className={filterStatus === 'inactive' ? 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800' : ''}
+                  >
+                    ○ Pasif
+                  </Button>
               </div>
             </div>
           </div>
@@ -185,82 +181,85 @@ export default function SurveysPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredSurveys.map((survey) => (
-                <div key={survey.id} className="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all duration-300 transform hover:-translate-y-1">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {survey.title}
-                    </h3>
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        survey.isActive
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
-                    >
-                      {survey.isActive ? '✓ Aktif' : '○ Pasif'}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                    {survey.description}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-6 pb-4 border-b border-gray-200">
-                    <span className="flex items-center">
-                      <span className="text-lg mr-1">📝</span>
-                      {survey._count?.questions || 0} soru
-                    </span>
-                    <span className="flex items-center">
-                      <span className="text-lg mr-1">✅</span>
-                      {survey._count?.responses || 0} cevap
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex space-x-2">
-                      <Link
-                        href={`/surveys/${survey.id}`}
-                        className="flex-1 text-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg"
-                      >
-                        Görüntüle
-                      </Link>
-                      {user.id === survey.creatorId && (
-                        <Tooltip content="Anketi Sil">
-                          <button
-                            onClick={() => setDeleteDialog({ isOpen: true, surveyId: survey.id })}
-                            className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
-                          >
-                            🗑️
-                          </button>
+                <Card key={survey.id} className="hover:shadow-lg transition-all group">
+                  <CardHeader>
+                    <div className="flex justify-between items-start mb-2">
+                      <CardTitle className="group-hover:text-blue-600 transition-colors">
+                        {survey.title}
+                      </CardTitle>
+                      <Badge variant={survey.isActive ? 'default' : 'secondary'} className={survey.isActive ? 'bg-green-600' : ''}>
+                        {survey.isActive ? '✓ Aktif' : '○ Pasif'}
+                      </Badge>
+                    </div>
+                    <CardDescription className="line-clamp-2">
+                      {survey.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-6 pb-4 border-b">
+                      <span className="flex items-center">
+                        <span className="text-lg mr-1">📝</span>
+                        {survey._count?.questions || 0} soru
+                      </span>
+                      <span className="flex items-center">
+                        <span className="text-lg mr-1">✅</span>
+                        {survey._count?.responses || 0} cevap
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex space-x-2">
+                        <Link href={`/surveys/${survey.id}`} className="flex-1">
+                          <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                            Görüntüle
+                          </Button>
+                        </Link>
+                        {user.id === survey.creatorId && (
+                          <Tooltip content="Anketi Sil">
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => setDeleteDialog({ isOpen: true, surveyId: survey.id })}
+                            >
+                              🗑️
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </div>
+                      {user.id === survey.creatorId && (survey._count?.responses || 0) > 0 && (
+                        <Tooltip content="Anket sonuçlarını ve istatistikleri görüntüle">
+                          <Link href={`/surveys/${survey.id}/statistics`} className="block">
+                            <Button variant="outline" className="w-full text-emerald-700 border-emerald-200 hover:bg-emerald-50">
+                              <span className="mr-2">📊</span>
+                              İstatistikleri Gör
+                            </Button>
+                          </Link>
                         </Tooltip>
                       )}
                     </div>
-                    {user.id === survey.creatorId && (survey._count?.responses || 0) > 0 && (
-                      <Tooltip content="Anket sonuçlarını ve istatistikleri görüntüle">
-                        <Link
-                          href={`/surveys/${survey.id}/statistics`}
-                          className="flex items-center justify-center w-full px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 rounded-xl hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 text-sm font-semibold border border-emerald-200"
-                        >
-                          <span className="mr-2">📊</span>
-                          İstatistikleri Gör
-                        </Link>
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
         </div>
       </main>
 
-      <ConfirmDialog
-        isOpen={deleteDialog.isOpen}
-        title="Anketi Sil"
-        message="Bu anketi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm yanıtlar silinecektir."
-        confirmText="Evet, Sil"
-        cancelText="İptal"
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteDialog({ isOpen: false, surveyId: null })}
-        type="danger"
-      />
+      <AlertDialog open={deleteDialog.isOpen} onOpenChange={(open) => !open && setDeleteDialog({ isOpen: false, surveyId: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Anketi Sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bu anketi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm yanıtlar silinecektir.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>İptal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+              Evet, Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
