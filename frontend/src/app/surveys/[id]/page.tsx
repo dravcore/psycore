@@ -18,8 +18,15 @@ export default function SurveyDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    
     if (!user) {
       router.push('/login');
       return;
@@ -28,7 +35,7 @@ export default function SurveyDetailPage() {
     if (params.id) {
       loadSurvey(params.id as string);
     }
-  }, [user, params.id, router]);
+  }, [hydrated, user, params.id, router]);
 
   const loadSurvey = async (id: string) => {
     try {

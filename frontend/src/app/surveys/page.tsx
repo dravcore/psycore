@@ -22,6 +22,7 @@ export default function SurveysPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const { addNotification } = useNotificationStore();
+  const [hydrated, setHydrated] = useState(false);
 
   const filteredSurveys = surveys.filter((survey) => {
     const matchesSearch = survey.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -33,13 +34,19 @@ export default function SurveysPage() {
   });
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    
     if (!user) {
       router.push('/login');
       return;
     }
 
     loadSurveys();
-  }, [user, router]);
+  }, [hydrated, user, router]);
 
   const loadSurveys = async () => {
     try {
@@ -66,7 +73,7 @@ export default function SurveysPage() {
     }
   };
 
-  if (!user) return null;
+  if (!hydrated || !user) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">

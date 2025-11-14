@@ -16,6 +16,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [statsLoading, setStatsLoading] = useState(true);
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [hydrated, setHydrated] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -27,6 +28,12 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    
     if (!user) {
       router.push('/login');
       return;
@@ -49,7 +56,7 @@ export default function ProfilePage() {
     };
 
     fetchStats();
-  }, [user, router]);
+  }, [hydrated, user, router]);
 
   const handleSave = async () => {
     if (!user) return;

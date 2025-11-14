@@ -13,14 +13,21 @@ export default function DashboardPage() {
   const { user } = useAuthStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    
     if (!user) {
       router.push('/login');
       return;
     }
     loadStats();
-  }, [user, router]);
+  }, [user, router, hydrated]);
 
   const loadStats = async () => {
     try {
@@ -34,7 +41,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (!user) {
+  if (!hydrated || !user) {
     return null;
   }
 

@@ -13,14 +13,21 @@ export default function TimelinePage() {
   const [timeline, setTimeline] = useState<Timeline | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    
     if (!user) {
       router.push('/login');
       return;
     }
     loadTimeline();
-  }, [user, router]);
+  }, [hydrated, user, router]);
 
   const loadTimeline = async () => {
     try {
@@ -35,7 +42,7 @@ export default function TimelinePage() {
     }
   };
 
-  if (!user) return null;
+  if (!hydrated || !user) return null;
 
   if (loading) {
     return (
