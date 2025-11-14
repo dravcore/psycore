@@ -30,7 +30,7 @@ export default function Home() {
             </Link>
             <Link
               href="/register"
-              className="px-8 py-4 text-lg font-semibold bg-background border-2 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+              className="px-8 py-4 text-lg font-semibold bg-background border-2 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
             >
               Kayıt Ol
             </Link>
