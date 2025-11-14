@@ -50,4 +50,10 @@ export class SurveysController {
   getResponses(@Param('id') id: string, @Request() req) {
     return this.surveysService.getResponses(id, req.user.userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/statistics')
+  getStatistics(@Param('id') id: string, @Request() req) {
+    return this.surveysService.getStatistics(id, req.user.userId);
+  }
 }

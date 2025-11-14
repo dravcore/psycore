@@ -138,20 +138,31 @@ export default function SurveysPage() {
                       {survey._count?.responses || 0} cevap
                     </span>
                   </div>
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/surveys/${survey.id}`}
-                      className="flex-1 text-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg"
-                    >
-                      Görüntüle
-                    </Link>
-                    {user.id === survey.creatorId && (
-                      <button
-                        onClick={() => handleDelete(survey.id)}
-                        className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
+                  <div className="space-y-2">
+                    <div className="flex space-x-2">
+                      <Link
+                        href={`/surveys/${survey.id}`}
+                        className="flex-1 text-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg"
                       >
-                        🗑️
-                      </button>
+                        Görüntüle
+                      </Link>
+                      {user.id === survey.creatorId && (
+                        <button
+                          onClick={() => handleDelete(survey.id)}
+                          className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                    {user.id === survey.creatorId && (survey._count?.responses || 0) > 0 && (
+                      <Link
+                        href={`/surveys/${survey.id}/statistics`}
+                        className="flex items-center justify-center w-full px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 rounded-xl hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 text-sm font-semibold border border-emerald-200"
+                      >
+                        <span className="mr-2">📊</span>
+                        İstatistikleri Gör
+                      </Link>
                     )}
                   </div>
                 </div>
