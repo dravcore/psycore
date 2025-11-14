@@ -19,6 +19,7 @@ export interface SurveyStatistics {
   questions: QuestionStatistics[];
   createdAt: string;
   lastResponseAt?: string;
+  hasAIAnalysis?: boolean;
 }
 
 export const statisticsApi = {

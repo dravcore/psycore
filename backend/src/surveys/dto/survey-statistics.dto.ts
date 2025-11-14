@@ -17,4 +17,5 @@ export class SurveyStatisticsDto {
   questions: QuestionStatistics[];
   createdAt: Date;
   lastResponseAt?: Date;
+  hasAIAnalysis?: boolean;
 }

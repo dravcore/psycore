@@ -89,7 +89,9 @@ export default function StatisticsPage() {
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2"
             >
               <span>🤖</span>
-              <span className="font-medium">AI Analizi</span>
+              <span className="font-medium">
+                {statistics.hasAIAnalysis ? 'Analiz Sonuçlarını Gör' : 'AI Analizi Yap'}
+              </span>
             </Link>
           </div>
         </div>

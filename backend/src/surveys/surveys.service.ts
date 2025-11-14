@@ -337,6 +337,26 @@ export class SurveysService {
       return stat;
     });
 
+    // Check if any TEXT answers have AI analysis
+    const textAnswersCount = survey.responses
+      .flatMap((r: any) => r.answers)
+      .filter((a: any) => {
+        const question = survey.questions.find((q: any) => q.id === a.questionId);
+        return question?.type === 'TEXT';
+      }).length;
+
+    const analyzedAnswersCount = await this.prisma.sentimentAnalysis.count({
+      where: {
+        answer: {
+          response: {
+            surveyId: surveyId,
+          },
+        },
+      },
+    });
+
+    const hasAIAnalysis = textAnswersCount > 0 && analyzedAnswersCount > 0;
+
     return {
       surveyId: survey.id,
       title: survey.title,
@@ -345,6 +365,7 @@ export class SurveysService {
       questions: questionStats,
       createdAt: survey.createdAt,
       lastResponseAt: lastResponse,
+      hasAIAnalysis,
     };
   }
 
