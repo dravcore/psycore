@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
-import authApi from '@/lib/api/auth';
+import authApi, { UserStats } from '@/lib/api/auth';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -12,6 +12,8 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -31,6 +33,20 @@ export default function ProfilePage() {
       username: user.username,
       email: user.email,
     });
+
+    // Fetch user stats
+    const fetchStats = async () => {
+      try {
+        const userStats = await authApi.getUserStats();
+        setStats(userStats);
+      } catch (error) {
+        console.error('Failed to fetch stats:', error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
   }, [user, router]);
 
   const handleSave = async () => {
@@ -205,20 +221,30 @@ export default function ProfilePage() {
           {/* Stats Section */}
           <div className="border-t border-gray-200 px-8 py-8 bg-gradient-to-r from-gray-50 to-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">İstatistikler</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-4 shadow-md">
-                <p className="text-sm text-gray-600">Oluşturulan Anket</p>
-                <p className="text-3xl font-bold text-blue-600 mt-2">-</p>
+            {statsLoading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
-              <div className="bg-white rounded-xl p-4 shadow-md">
-                <p className="text-sm text-gray-600">Verilen Yanıt</p>
-                <p className="text-3xl font-bold text-purple-600 mt-2">-</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-xl p-4 shadow-md">
+                  <p className="text-sm text-gray-600">Oluşturulan Anket</p>
+                  <p className="text-3xl font-bold text-blue-600 mt-2">{stats?.totalSurveysCreated || 0}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 shadow-md">
+                  <p className="text-sm text-gray-600">Verilen Yanıt</p>
+                  <p className="text-3xl font-bold text-purple-600 mt-2">{stats?.totalResponsesGiven || 0}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 shadow-md">
+                  <p className="text-sm text-gray-600">AI Analizi</p>
+                  <p className="text-3xl font-bold text-green-600 mt-2">{stats?.totalAnalyzedResponses || 0}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 shadow-md">
+                  <p className="text-sm text-gray-600">Üyelik Süresi</p>
+                  <p className="text-3xl font-bold text-indigo-600 mt-2">{stats?.membershipDays || 0} <span className="text-sm font-normal">gün</span></p>
+                </div>
               </div>
-              <div className="bg-white rounded-xl p-4 shadow-md">
-                <p className="text-sm text-gray-600">Üyelik Süresi</p>
-                <p className="text-3xl font-bold text-indigo-600 mt-2">-</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

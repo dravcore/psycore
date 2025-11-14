@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserStatsDto } from './dto/user-stats.dto';
 
 @Injectable()
 export class AuthService {
@@ -178,6 +179,73 @@ export class AuthService {
     });
 
     return updatedUser;
+  }
+
+  async getUserStats(userId: string): Promise<UserStatsDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Get total surveys created by user
+    const totalSurveysCreated = await this.prisma.survey.count({
+      where: { creatorId: userId },
+    });
+
+    // Get total responses given by user
+    const totalResponsesGiven = await this.prisma.surveyResponse.count({
+      where: { userId },
+    });
+
+    // Get total analyzed responses (responses with sentiment analysis)
+    const analyzedResponses = await this.prisma.surveyResponse.count({
+      where: {
+        userId,
+        answers: {
+          some: {
+            analysis: {
+              isNot: null,
+            },
+          },
+        },
+      },
+    });
+
+    // Calculate membership days
+    const now = new Date();
+    const createdAt = user.createdAt;
+    const membershipDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Calculate average sentiment confidence from user's analyzed responses
+    const sentimentData = await this.prisma.sentimentAnalysis.findMany({
+      where: {
+        answer: {
+          response: {
+            userId,
+          },
+        },
+      },
+      select: {
+        confidence: true,
+      },
+    });
+
+    let averageSentiment: number | undefined;
+    if (sentimentData.length > 0) {
+      const totalScore = sentimentData.reduce((sum, item) => sum + item.confidence, 0);
+      averageSentiment = Math.round((totalScore / sentimentData.length) * 100) / 100;
+    }
+
+    return {
+      totalSurveysCreated,
+      totalResponsesGiven,
+      totalAnalyzedResponses: analyzedResponses,
+      membershipDays,
+      averageSentiment,
+    };
   }
 
   private async generateTokens(userId: string, email: string) {

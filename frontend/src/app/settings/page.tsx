@@ -3,11 +3,13 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import Navbar from '@/components/Navbar';
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { preferences, updatePreference } = useSettingsStore();
 
   useEffect(() => {
     if (!user) {
@@ -39,7 +41,12 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-600">Yeni yanıtlar hakkında bildirim al</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={preferences.emailNotifications}
+                  onChange={(e) => updatePreference('emailNotifications', e.target.checked)}
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
               </label>
             </div>
@@ -50,7 +57,12 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-600">Anket tamamlandığında bildir</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={preferences.surveyCompletedNotifications}
+                  onChange={(e) => updatePreference('surveyCompletedNotifications', e.target.checked)}
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
               </label>
             </div>
@@ -67,7 +79,12 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-600">Diğer kullanıcılar profilimi görebilsin</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={preferences.profileVisibility}
+                  onChange={(e) => updatePreference('profileVisibility', e.target.checked)}
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
               </label>
             </div>
@@ -78,7 +95,12 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-600">Yanıtlarım anonim olarak kaydedilsin</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={preferences.anonymousResponses}
+                  onChange={(e) => updatePreference('anonymousResponses', e.target.checked)}
+                />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
               </label>
             </div>
@@ -92,13 +114,34 @@ export default function SettingsPage() {
             <div className="p-4 bg-gray-50 rounded-xl">
               <p className="font-medium text-gray-800 mb-3">Tema</p>
               <div className="flex space-x-3">
-                <button className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg">
+                <button 
+                  onClick={() => updatePreference('theme', 'light')}
+                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
+                    preferences.theme === 'light'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
                   ☀️ Açık
                 </button>
-                <button className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-colors">
+                <button 
+                  onClick={() => updatePreference('theme', 'dark')}
+                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
+                    preferences.theme === 'dark'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
                   🌙 Koyu
                 </button>
-                <button className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-colors">
+                <button 
+                  onClick={() => updatePreference('theme', 'auto')}
+                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
+                    preferences.theme === 'auto'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
                   🔄 Otomatik
                 </button>
               </div>
@@ -106,9 +149,13 @@ export default function SettingsPage() {
 
             <div className="p-4 bg-gray-50 rounded-xl">
               <p className="font-medium text-gray-800 mb-3">Dil</p>
-              <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                <option>🇹🇷 Türkçe</option>
-                <option>🇬🇧 English</option>
+              <select 
+                value={preferences.language}
+                onChange={(e) => updatePreference('language', e.target.value as 'tr' | 'en')}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              >
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="en">🇬🇧 English</option>
               </select>
             </div>
           </div>
