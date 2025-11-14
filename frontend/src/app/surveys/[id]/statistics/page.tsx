@@ -77,10 +77,21 @@ export default function StatisticsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
-            📊 Anket İstatistikleri
-          </h1>
-          <p className="text-gray-600 text-lg">{statistics.title}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+                📊 Anket İstatistikleri
+              </h1>
+              <p className="text-gray-600 text-lg">{statistics.title}</p>
+            </div>
+            <Link
+              href={`/surveys/${surveyId}/ai-insights`}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2"
+            >
+              <span>🤖</span>
+              <span className="font-medium">AI Analizi</span>
+            </Link>
+          </div>
         </div>
 
         {/* Overview Stats */}

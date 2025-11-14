@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface SentimentAnalysisResult {
   sentiment: 'positive' | 'negative' | 'neutral' | 'mixed';
@@ -15,73 +15,69 @@ export interface SentimentAnalysisResult {
 @Injectable()
 export class OpenAIService {
   private readonly logger = new Logger(OpenAIService.name);
-  private openai: OpenAI;
+  private genAI: GoogleGenerativeAI;
+  private model: any;
 
   constructor() {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GOOGLE_AI_API_KEY || process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      this.logger.warn('OpenAI API key not configured. AI features will be disabled.');
+      this.logger.warn('Google AI API key not configured. AI features will be disabled.');
       return;
     }
 
-    this.openai = new OpenAI({
-      apiKey,
-    });
+    this.genAI = new GoogleGenerativeAI(apiKey);
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.logger.log('Google Gemini AI initialized successfully');
   }
 
   async analyzeSentiment(text: string): Promise<SentimentAnalysisResult> {
-    if (!this.openai) {
-      throw new Error('OpenAI not configured');
+    if (!this.model) {
+      throw new Error('Google AI not configured');
     }
 
     try {
-      const prompt = `Analyze the following text for sentiment and emotions. Provide a detailed psychological analysis.
+      const prompt = `Sen profesyonel bir psikolog ve duygu analizi uzmanısın. Aşağıdaki metni analiz et ve psikolojik bir değerlendirme yap.
 
-Text: "${text}"
+Metin: "${text}"
 
-Respond in JSON format with the following structure:
+Lütfen sadece aşağıdaki JSON formatında yanıt ver (başka açıklama ekleme):
 {
-  "sentiment": "positive|negative|neutral|mixed",
-  "confidence": 0.0-1.0,
+  "sentiment": "positive veya negative veya neutral veya mixed",
+  "confidence": 0.0 ile 1.0 arası güven skoru,
   "emotions": [
-    {"emotion": "joy|sadness|anger|fear|surprise|disgust|anxiety|hope|etc", "intensity": 0.0-1.0}
+    {"emotion": "mutluluk|üzüntü|öfke|korku|şaşkınlık|tiksinme|endişe|umut|vb", "intensity": 0.0-1.0}
   ],
-  "keywords": ["key", "words", "from", "text"],
-  "summary": "Brief psychological interpretation"
+  "keywords": ["metindeki", "anahtar", "kelimeler"],
+  "summary": "Kısa psikolojik yorum"
 }
 
-Focus on:
-- Overall sentiment (positive, negative, neutral, or mixed)
-- Specific emotions detected with intensity levels
-- Key psychological indicators
-- Brief professional summary`;
+Odaklan:
+- Genel duygu durumu (pozitif, negatif, nötr veya karışık)
+- Tespit edilen spesifik duygular ve yoğunlukları
+- Psikolojik göstergeler
+- Kısa profesyonel özet (Türkçe)`;
 
-      const completion = await this.openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a professional psychologist specialized in sentiment analysis and emotional intelligence. Provide accurate, evidence-based assessments.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.3,
-      });
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      const content = response.text();
 
-      const content = completion.choices[0].message.content;
       if (!content) {
-        throw new Error('No content in OpenAI response');
+        throw new Error('No content in Gemini response');
       }
 
-      const result = JSON.parse(content);
+      // Extract JSON from markdown code blocks if present
+      let jsonText = content.trim();
+      if (jsonText.startsWith('```json')) {
+        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      } else if (jsonText.startsWith('```')) {
+        jsonText = jsonText.replace(/```\n?/g, '');
+      }
+
+      const parsedResult = JSON.parse(jsonText);
       
       this.logger.log(`Sentiment analyzed for text (length: ${text.length})`);
       
-      return result;
+      return parsedResult;
     } catch (error) {
       this.logger.error('Error analyzing sentiment:', error);
       throw error;
@@ -112,39 +108,28 @@ Focus on:
   }
 
   async generateInsight(analysisData: any): Promise<string> {
-    if (!this.openai) {
-      throw new Error('OpenAI not configured');
+    if (!this.model) {
+      throw new Error('Google AI not configured');
     }
 
     try {
-      const prompt = `Based on the following psychological assessment data, provide a professional insight:
+      const prompt = `Sen empatik bir psikologsun ve kullanıcılara duygusal durumları hakkında yardımcı içgörüler sağlıyorsun.
+
+Aşağıdaki psikolojik değerlendirme verilerine dayanarak profesyonel bir içgörü sun:
 
 ${JSON.stringify(analysisData, null, 2)}
 
-Provide a brief, professional psychological insight (2-3 sentences) that would be helpful for the user to understand their emotional state or personality traits.`;
+Kullanıcının duygusal durumunu veya kişilik özelliklerini anlamasına yardımcı olacak kısa, profesyonel bir içgörü sun (2-3 cümle, Türkçe).`;
 
-      const completion = await this.openai.chat.completions.create({
-        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a compassionate psychologist providing helpful insights to users about their emotional and mental states.',
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 200,
-      });
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      const content = response.text();
 
-      const content = completion.choices[0].message.content;
       if (!content) {
-        throw new Error('No content in OpenAI response');
+        throw new Error('No content in Gemini response');
       }
 
-      return content;
+      return content.trim();
     } catch (error) {
       this.logger.error('Error generating insight:', error);
       throw error;
