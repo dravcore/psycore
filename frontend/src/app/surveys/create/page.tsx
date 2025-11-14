@@ -6,6 +6,14 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { surveysApi, Question } from '@/lib/api/surveys';
 import Navbar from '@/components/Navbar';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function CreateSurveyPage() {
   const router = useRouter();

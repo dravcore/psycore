@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { aiInsightsApi, AIInsights } from '@/lib/api/ai-insights';
 import Navbar from '@/components/Navbar';
 import { AIInsightsSkeleton } from '@/components/Skeletons';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function AIInsightsPage() {
   const params = useParams();
