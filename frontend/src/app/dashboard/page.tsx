@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
 import { dashboardApi, DashboardStats } from '@/lib/api/dashboard';
+import { StatCardSkeleton } from '@/components/Skeletons';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -39,17 +40,23 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
         <Navbar />
-        <div className="flex items-center justify-center h-[80vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
+        <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <div className="h-10 bg-gray-200 dark:bg-slate-700 rounded w-64 mb-2 animate-pulse"></div>
+            <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-48 animate-pulse"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => <StatCardSkeleton key={i} />)}
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">

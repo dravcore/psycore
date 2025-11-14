@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { statisticsApi, SurveyStatistics } from '@/lib/api/statistics';
 import Navbar from '@/components/Navbar';
+import toast from 'react-hot-toast';
 
 export default function StatisticsPage() {
   const params = useParams();
@@ -103,9 +104,10 @@ export default function StatisticsPage() {
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
+                    toast.success('Veriler başarıyla dışa aktarıldı!');
                   } catch (error) {
                     console.error('Export failed:', error);
-                    alert('Dışa aktarma başarısız oldu');
+                    toast.error('Dışa aktarma başarısız oldu');
                   }
                 }}
                 className="px-4 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-xl hover:bg-blue-50 transition-all flex items-center gap-2"

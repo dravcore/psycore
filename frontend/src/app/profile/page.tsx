@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
 import authApi, { UserStats } from '@/lib/api/auth';
+import toast from 'react-hot-toast';
+import { ProfileSkeleton } from '@/components/Skeletons';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -61,9 +63,9 @@ export default function ProfilePage() {
 
       setUser(updatedUser);
       setIsEditing(false);
-      alert('✅ Profil başarıyla güncellendi!');
+      toast.success('Profil başarıyla güncellendi!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Profil güncellenirken bir hata oluştu');
+      toast.error(error.response?.data?.message || 'Profil güncellenirken bir hata oluştu');
     } finally {
       setLoading(false);
     }
@@ -71,12 +73,12 @@ export default function ProfilePage() {
 
   const handlePasswordChange = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('❌ Yeni şifreler eşleşmiyor!');
+      toast.error('Yeni şifreler eşleşmiyor!');
       return;
     }
 
     if (passwordData.newPassword.length < 6) {
-      alert('❌ Şifre en az 6 karakter olmalıdır!');
+      toast.error('Şifre en az 6 karakter olmalıdır!');
       return;
     }
 
@@ -89,9 +91,9 @@ export default function ProfilePage() {
 
       setIsChangingPassword(false);
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-      alert('✅ Şifre başarıyla değiştirildi!');
+      toast.success('Şifre başarıyla değiştirildi!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Şifre değiştirilirken bir hata oluştu');
+      toast.error(error.response?.data?.message || 'Şifre değiştirilirken bir hata oluştu');
     } finally {
       setLoading(false);
     }
@@ -108,8 +110,17 @@ export default function ProfilePage() {
       .slice(0, 2);
   };
 
+  if (statsLoading && !stats) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <Navbar />
+        <ProfileSkeleton />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

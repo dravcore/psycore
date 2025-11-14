@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import Navbar from '@/components/Navbar';
 import authApi from '@/lib/api/auth';
+import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     if (!deletePassword) {
-      alert('❌ Şifrenizi girin!');
+      toast.error('Şifrenizi girin!');
       return;
     }
 
@@ -35,10 +36,10 @@ export default function SettingsPage() {
     try {
       await authApi.deleteAccount(deletePassword);
       clearAuth();
+      toast.success('Hesabınız başarıyla silindi.');
       router.push('/');
-      alert('✅ Hesabınız başarıyla silindi.');
     } catch (error: any) {
-      alert(error.response?.data?.message || '❌ Hesap silinirken bir hata oluştu');
+      toast.error(error.response?.data?.message || 'Hesap silinirken bir hata oluştu');
     } finally {
       setDeleteLoading(false);
     }
@@ -47,7 +48,7 @@ export default function SettingsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
