@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import authApi, { UserStats } from '@/lib/api/auth';
 import toast from 'react-hot-toast';
 import { ProfileSkeleton } from '@/components/Skeletons';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -269,13 +269,15 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Password Change Section */}
-        <div className="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 px-8 py-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">🔐 Şifre Değiştir</h3>
-          <p className="text-gray-600 mb-6">Hesabınızın güvenliği için düzenli olarak şifrenizi değiştirin</p>
-          
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>🔐 Şifre Değiştir</CardTitle>
+            <CardDescription>Hesabınızın güvenliği için düzenli olarak şifrenizi değiştirin</CardDescription>
+          </CardHeader>
+          <CardContent>
           {!isChangingPassword ? (
             <button 
               onClick={() => setIsChangingPassword(true)}
@@ -345,7 +347,8 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
