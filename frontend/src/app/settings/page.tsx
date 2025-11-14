@@ -7,6 +7,12 @@ import { useSettingsStore } from '@/store/settingsStore';
 import Navbar from '@/components/Navbar';
 import authApi from '@/lib/api/auth';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -67,194 +73,175 @@ export default function SettingsPage() {
         </div>
 
         {/* Notification Settings */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">🔔 Bildirimler</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-              <div>
-                <p className="font-medium text-gray-800">E-posta Bildirimleri</p>
-                <p className="text-sm text-gray-600">Yeni yanıtlar hakkında bildirim al</p>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>🔔 Bildirimler</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="email-notif">E-posta Bildirimleri</Label>
+                <p className="text-sm text-muted-foreground">Yeni yanıtlar hakkında bildirim al</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={preferences.emailNotifications}
-                  onChange={(e) => updatePreference('emailNotifications', e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
-              </label>
+              <Switch
+                id="email-notif"
+                checked={preferences.emailNotifications}
+                onCheckedChange={(checked) => updatePreference('emailNotifications', checked)}
+              />
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-              <div>
-                <p className="font-medium text-gray-800">Anket Tamamlandı</p>
-                <p className="text-sm text-gray-600">Anket tamamlandığında bildir</p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="survey-notif">Anket Tamamlandı</Label>
+                <p className="text-sm text-muted-foreground">Anket tamamlandığında bildir</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={preferences.surveyCompletedNotifications}
-                  onChange={(e) => updatePreference('surveyCompletedNotifications', e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
-              </label>
+              <Switch
+                id="survey-notif"
+                checked={preferences.surveyCompletedNotifications}
+                onCheckedChange={(checked) => updatePreference('surveyCompletedNotifications', checked)}
+              />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Privacy Settings */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">🔒 Gizlilik</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-              <div>
-                <p className="font-medium text-gray-800">Profil Görünürlüğü</p>
-                <p className="text-sm text-gray-600">Diğer kullanıcılar profilimi görebilsin</p>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>🔒 Gizlilik</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="profile-visibility">Profil Görünürlüğü</Label>
+                <p className="text-sm text-muted-foreground">Diğer kullanıcılar profilimi görebilsin</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={preferences.profileVisibility}
-                  onChange={(e) => updatePreference('profileVisibility', e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
-              </label>
+              <Switch
+                id="profile-visibility"
+                checked={preferences.profileVisibility}
+                onCheckedChange={(checked) => updatePreference('profileVisibility', checked)}
+              />
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-              <div>
-                <p className="font-medium text-gray-800">Anonim Yanıtlar</p>
-                <p className="text-sm text-gray-600">Yanıtlarım anonim olarak kaydedilsin</p>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="anonymous">Anonim Yanıtlar</Label>
+                <p className="text-sm text-muted-foreground">Yanıtlarım anonim olarak kaydedilsin</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={preferences.anonymousResponses}
-                  onChange={(e) => updatePreference('anonymousResponses', e.target.checked)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-purple-600"></div>
-              </label>
+              <Switch
+                id="anonymous"
+                checked={preferences.anonymousResponses}
+                onCheckedChange={(checked) => updatePreference('anonymousResponses', checked)}
+              />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Display Settings */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6">🎨 Görünüm</h3>
-          <div className="space-y-4">
-            <div className="p-4 bg-gray-50 rounded-xl">
-              <p className="font-medium text-gray-800 mb-3">Tema</p>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>🎨 Görünüm</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Label>Tema</Label>
               <div className="flex space-x-3">
-                <button 
+                <Button
+                  variant={preferences.theme === 'light' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'light')}
-                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
-                    preferences.theme === 'light'
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`flex-1 ${preferences.theme === 'light' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
                 >
                   ☀️ Açık
-                </button>
-                <button 
+                </Button>
+                <Button
+                  variant={preferences.theme === 'dark' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'dark')}
-                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
-                    preferences.theme === 'dark'
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`flex-1 ${preferences.theme === 'dark' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
                 >
                   🌙 Koyu
-                </button>
-                <button 
+                </Button>
+                <Button
+                  variant={preferences.theme === 'auto' ? 'default' : 'outline'}
                   onClick={() => updatePreference('theme', 'auto')}
-                  className={`flex-1 px-4 py-3 rounded-xl font-medium transition-all ${
-                    preferences.theme === 'auto'
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`flex-1 ${preferences.theme === 'auto' ? 'bg-gradient-to-r from-blue-600 to-purple-600' : ''}`}
                 >
                   🔄 Otomatik
-                </button>
+                </Button>
               </div>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-xl">
-              <p className="font-medium text-gray-800 mb-3">Dil</p>
+            <div className="space-y-3">
+              <Label htmlFor="language">Dil</Label>
               <select 
+                id="language"
                 value={preferences.language}
                 onChange={(e) => updatePreference('language', e.target.value as 'tr' | 'en')}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-input bg-background rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
               >
                 <option value="tr">🇹🇷 Türkçe</option>
                 <option value="en">🇬🇧 English</option>
               </select>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Danger Zone */}
-        <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-8">
-          <h3 className="text-xl font-semibold text-red-800 mb-4">⚠️ Tehlikeli Bölge</h3>
-          <p className="text-red-700 mb-6">
-            Bu işlemler geri alınamaz. Lütfen dikkatli olun.
-          </p>
-          
-          {!showDeleteModal ? (
-            <button 
+        <Card className="border-destructive bg-destructive/5">
+          <CardHeader>
+            <CardTitle className="text-destructive">⚠️ Tehlikeli Bölge</CardTitle>
+            <CardDescription>
+              Bu işlemler geri alınamaz. Lütfen dikkatli olun.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="destructive"
               onClick={() => setShowDeleteModal(true)}
-              className="px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-lg"
             >
               🗑️ Hesabı Sil
-            </button>
-          ) : (
-            <div className="space-y-4">
-              <div className="p-4 bg-red-100 border border-red-300 rounded-xl">
-                <p className="font-semibold text-red-900 mb-2">⚠️ Dikkat!</p>
-                <p className="text-sm text-red-800">
-                  Hesabınızı silmek için şifrenizi girin. Bu işlem tüm anketlerinizi, 
-                  yanıtlarınızı ve analizlerinizi kalıcı olarak silecektir.
-                </p>
-              </div>
+            </Button>
+          </CardContent>
+        </Card>
 
-              <div>
-                <label className="block text-sm font-medium text-red-800 mb-2">
-                  Şifrenizi Girin
-                </label>
-                <input
+        {/* Delete Account Dialog */}
+        <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>⚠️ Hesabınızı silmek istediğinizden emin misiniz?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Bu işlem geri alınamaz. Tüm anketleriniz, yanıtlarınız ve analizleriniz kalıcı olarak silinecektir.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="delete-password">Şifrenizi Girin</Label>
+                <Input
+                  id="delete-password"
                   type="password"
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-red-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
                 />
               </div>
-
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                    setDeletePassword('');
-                  }}
-                  disabled={deleteLoading}
-                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
-                  İptal
-                </button>
-                <button
-                  onClick={handleDeleteAccount}
-                  disabled={deleteLoading}
-                  className="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50"
-                >
-                  {deleteLoading ? '⏳ Siliniyor...' : '🗑️ Hesabı Kalıcı Olarak Sil'}
-                </button>
-              </div>
             </div>
-          )}
-        </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => {
+                  setDeletePassword('');
+                }}
+                disabled={deleteLoading}
+              >
+                İptal
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAccount}
+                disabled={deleteLoading}
+                className="bg-destructive hover:bg-destructive/90"
+              >
+                {deleteLoading ? '⏳ Siliniyor...' : '🗑️ Hesabı Kalıcı Olarak Sil'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
