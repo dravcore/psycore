@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { aiInsightsApi, AIInsights } from '@/lib/api/ai-insights';
 import Navbar from '@/components/Navbar';
+import { AIInsightsSkeleton } from '@/components/Skeletons';
 
 export default function AIInsightsPage() {
   const params = useParams();
@@ -78,11 +79,9 @@ export default function AIInsightsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">AI analizleri yükleniyor...</p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <Navbar />
+        <AIInsightsSkeleton />
       </div>
     );
   }

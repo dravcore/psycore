@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { surveysApi, Survey } from '@/lib/api/surveys';
 import Navbar from '@/components/Navbar';
+import { SurveyDetailSkeleton } from '@/components/Skeletons';
 
 export default function SurveyDetailPage() {
   const router = useRouter();
@@ -82,8 +83,9 @@ export default function SurveyDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Yükleniyor...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+        <Navbar />
+        <SurveyDetailSkeleton />
       </div>
     );
   }

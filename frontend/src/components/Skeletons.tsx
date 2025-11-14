@@ -89,3 +89,114 @@ export function ProfileSkeleton() {
     </div>
   );
 }
+
+export function SurveyDetailSkeleton() {
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="animate-pulse space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <div className="h-10 bg-gray-200 dark:bg-slate-700 rounded w-2/3 mb-3"></div>
+            <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4"></div>
+          </div>
+          <div className="ml-6 h-10 w-32 bg-gray-200 dark:bg-slate-700 rounded-lg"></div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-gray-100 dark:border-slate-700">
+              <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-20 mb-3"></div>
+              <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-16"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Questions Section */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-slate-700">
+          <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-32 mb-6"></div>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-6 bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700">
+                <div className="h-5 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-4"></div>
+                <div className="space-y-2">
+                  {[1, 2, 3, 4].map((j) => (
+                    <div key={j} className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/2"></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SurveyListSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <SurveyCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+export function AIInsightsSkeleton() {
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="animate-pulse space-y-6">
+        {/* Header */}
+        <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-64 mb-6"></div>
+
+        {/* Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg border border-gray-100 dark:border-slate-700">
+              <div className="h-5 bg-gray-200 dark:bg-slate-700 rounded w-32 mb-3"></div>
+              <div className="h-10 bg-gray-200 dark:bg-slate-700 rounded w-20"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Sentiment Chart */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-slate-700">
+          <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-48 mb-6"></div>
+          <div className="h-64 bg-gray-100 dark:bg-slate-900 rounded-lg"></div>
+        </div>
+
+        {/* Key Insights */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-slate-700">
+          <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-40 mb-6"></div>
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className="w-2 h-2 bg-gray-200 dark:bg-slate-700 rounded-full mt-2"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-4/5"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Response List */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-lg border border-gray-100 dark:border-slate-700">
+          <div className="h-6 bg-gray-200 dark:bg-slate-700 rounded w-32 mb-6"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-4 bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-700">
+                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

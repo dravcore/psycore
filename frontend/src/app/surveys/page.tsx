@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { surveysApi, Survey } from '@/lib/api/surveys';
 import Navbar from '@/components/Navbar';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { SurveyListSkeleton } from '@/components/Skeletons';
 import EmptyState from '@/components/EmptyState';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import Tooltip from '@/components/Tooltip';
@@ -157,9 +157,7 @@ export default function SurveysPage() {
           )}
 
           {loading ? (
-            <div className="py-12">
-              <LoadingSpinner size="lg" />
-            </div>
+            <SurveyListSkeleton count={6} />
           ) : filteredSurveys.length === 0 ? (
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100">
               <EmptyState
