@@ -48,20 +48,23 @@ export default function SurveysPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <nav className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-                PsyCore
+              <Link href="/dashboard" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                  <span className="text-xl">🧠</span>
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PsyCore</span>
               </Link>
-              <Link href="/surveys" className="text-blue-600 font-medium">
+              <Link href="/surveys" className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">
                 Anketler
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">{user.username}</span>
+              <span className="text-sm font-medium text-gray-700">{user.username}</span>
             </div>
           </div>
         </div>
@@ -69,13 +72,18 @@ export default function SurveysPage() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Anketler</h1>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Anketler</h1>
+              <p className="text-gray-600 mt-2">Tüm anketleri görüntüleyin ve yönetin</p>
+            </div>
             <Link
               href="/surveys/create"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="group px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold flex items-center"
             >
-              + Yeni Anket Oluştur
+              <span className="text-xl mr-2">+</span>
+              Yeni Anket Oluştur
+              <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
           </div>
 
@@ -102,41 +110,47 @@ export default function SurveysPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {surveys.map((survey) => (
-                <div key={survey.id} className="bg-white rounded-lg shadow p-6">
+                <div key={survey.id} className="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all duration-300 transform hover:-translate-y-1">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
                       {survey.title}
                     </h3>
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${
+                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
                         survey.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-600'
                       }`}
                     >
-                      {survey.isActive ? 'Aktif' : 'Pasif'}
+                      {survey.isActive ? '✓ Aktif' : '○ Pasif'}
                     </span>
                   </div>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                     {survey.description}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <span>📝 {survey._count?.questions || 0} soru</span>
-                    <span>✅ {survey._count?.responses || 0} cevap</span>
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-6 pb-4 border-b border-gray-200">
+                    <span className="flex items-center">
+                      <span className="text-lg mr-1">📝</span>
+                      {survey._count?.questions || 0} soru
+                    </span>
+                    <span className="flex items-center">
+                      <span className="text-lg mr-1">✅</span>
+                      {survey._count?.responses || 0} cevap
+                    </span>
                   </div>
                   <div className="flex space-x-2">
                     <Link
                       href={`/surveys/${survey.id}`}
-                      className="flex-1 text-center px-3 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors text-sm font-medium"
+                      className="flex-1 text-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg"
                     >
                       Görüntüle
                     </Link>
                     {user.id === survey.creatorId && (
                       <button
                         onClick={() => handleDelete(survey.id)}
-                        className="px-3 py-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors text-sm font-medium"
+                        className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
                       >
-                        Sil
+                        🗑️
                       </button>
                     )}
                   </div>
