@@ -9,6 +9,11 @@ import axiosInstance from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -47,120 +52,93 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-100">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg mb-4">
-              <span className="text-3xl">🧠</span>
-            </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Hesap Oluştur
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Zaten hesabınız var mı?{' '}
-              <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Giriş yapın
-              </Link>
-            </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center space-y-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-lg mx-auto">
+            <span className="text-3xl">🧠</span>
           </div>
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Hesap Oluştur
+          </CardTitle>
+          <CardDescription>
+            Zaten hesabınız var mı?{' '}
+            <Link href="/login" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+              Giriş yapın
+            </Link>
+          </CardDescription>
+        </CardHeader>
 
+        <CardContent>
           <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             {error && (
-              <div className="rounded-xl bg-red-50 border border-red-200 p-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                <p className="text-sm text-red-800 flex items-center">
-                  <span className="mr-2">⚠️</span>
-                  {error}
-                </p>
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Adresi
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Adresi</Label>
+                <Input
                   {...register('email')}
                   id="email"
                   type="email"
                   autoComplete="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50"
                   placeholder="ornek@email.com"
                 />
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">•</span>
-                    {errors.email.message}
-                  </p>
+                  <p className="text-sm text-destructive">{errors.email.message}</p>
                 )}
               </div>
 
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                  Kullanıcı Adı
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="username">Kullanıcı Adı</Label>
+                <Input
                   {...register('username')}
                   id="username"
                   type="text"
                   autoComplete="username"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50"
                   placeholder="kullaniciadi"
                 />
                 {errors.username && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">•</span>
-                    {errors.username.message}
-                  </p>
+                  <p className="text-sm text-destructive">{errors.username.message}</p>
                 )}
               </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Şifre
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="password">Şifre</Label>
+                <Input
                   {...register('password')}
                   id="password"
                   type="password"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50"
                   placeholder="••••••••"
                 />
                 {errors.password && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">•</span>
-                    {errors.password.message}
-                  </p>
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
               </div>
 
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Şifre Tekrar
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Şifre Tekrar</Label>
+                <Input
                   {...register('confirmPassword')}
                   id="confirmPassword"
                   type="password"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50"
                   placeholder="••••••••"
                 />
                 {errors.confirmPassword && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center">
-                    <span className="mr-1">•</span>
-                    {errors.confirmPassword.message}
-                  </p>
+                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
                 )}
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center items-center py-3 px-4 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               {isLoading ? (
                 <>
@@ -171,14 +149,11 @@ export default function RegisterPage() {
                   Kayıt olunuyor...
                 </>
               ) : (
-                <>
-                  Kayıt Ol
-                  <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
-                </>
+                'Kayıt Ol'
               )}
-            </button>
+            </Button>
           </form>
-        </div>
+        </CardContent>
       </div>
     </div>
   );
