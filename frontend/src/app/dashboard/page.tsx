@@ -26,9 +26,63 @@ export default function DashboardPage() {
 
       <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          {/* Welcome Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
               Hoş geldin, {user.username}! 👋
+            </h1>
+            <p className="text-gray-600 text-lg">İşte bugünkü özet ve hızlı erişimler</p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <Link
+              href="/surveys/create"
+              className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all transform hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">➕</span>
+                <svg className="w-6 h-6 text-gray-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-1">Yeni Anket Oluştur</h3>
+              <p className="text-sm text-gray-600">Özel anketler tasarlayın</p>
+            </Link>
+
+            <Link
+              href="/surveys"
+              className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all transform hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">📝</span>
+                <svg className="w-6 h-6 text-gray-400 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-1">Anketlerim</h3>
+              <p className="text-sm text-gray-600">Tüm anketleri görüntüle</p>
+            </Link>
+
+            <Link
+              href="/profile"
+              className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 transition-all transform hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-4xl">👤</span>
+                <svg className="w-6 h-6 text-gray-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-1">Profil Ayarları</h3>
+              <p className="text-sm text-gray-600">Bilgilerinizi düzenleyin</p>
+            </Link>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="text-3xl mr-3">📊</span>
+              Genel Bakış
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

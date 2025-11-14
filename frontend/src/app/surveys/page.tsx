@@ -6,6 +6,11 @@ import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { surveysApi, Survey } from '@/lib/api/surveys';
 import Navbar from '@/components/Navbar';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import EmptyState from '@/components/EmptyState';
+import ConfirmDialog from '@/components/ConfirmDialog';
+import Tooltip from '@/components/Tooltip';
+import { useNotificationStore } from '@/store/notificationStore';
 
 export default function SurveysPage() {
   const router = useRouter();
@@ -13,6 +18,8 @@ export default function SurveysPage() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; surveyId: string | null }>({ isOpen: false, surveyId: null });
+  const { addNotification } = useNotificationStore();
 
   useEffect(() => {
     if (!user) {
@@ -35,14 +42,16 @@ export default function SurveysPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Bu anketi silmek istediğinizden emin misiniz?')) return;
+  const handleDelete = async () => {
+    if (!deleteDialog.surveyId) return;
 
     try {
-      await surveysApi.delete(id);
-      setSurveys(surveys.filter((s) => s.id !== id));
+      await surveysApi.delete(deleteDialog.surveyId);
+      setSurveys(surveys.filter((s) => s.id !== deleteDialog.surveyId));
+      addNotification({ type: 'success', title: 'Başarılı', message: 'Anket başarıyla silindi' });
+      setDeleteDialog({ isOpen: false, surveyId: null });
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Anket silinirken hata oluştu');
+      addNotification({ type: 'error', title: 'Hata', message: err.response?.data?.message || 'Anket silinirken hata oluştu' });
     }
   };
 
@@ -76,18 +85,17 @@ export default function SurveysPage() {
           )}
 
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Yükleniyor...</p>
+            <div className="py-12">
+              <LoadingSpinner size="lg" />
             </div>
           ) : surveys.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow">
-              <p className="text-gray-500 mb-4">Henüz anket bulunmuyor</p>
-              <Link
-                href="/surveys/create"
-                className="text-blue-600 hover:text-blue-700 font-medium"
-              >
-                İlk anketi oluştur →
-              </Link>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100">
+              <EmptyState
+                icon="📝"
+                title="Henüz Anket Yok"
+                description="İlk psikolojik değerlendirme anketinizi oluşturun ve kullanıcılardan yanıt almaya başlayın."
+                action={{ label: 'İlk Anketi Oluştur', onClick: () => router.push('/surveys/create') }}
+              />
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -129,22 +137,26 @@ export default function SurveysPage() {
                         Görüntüle
                       </Link>
                       {user.id === survey.creatorId && (
-                        <button
-                          onClick={() => handleDelete(survey.id)}
-                          className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
-                        >
-                          🗑️
-                        </button>
+                        <Tooltip content="Anketi Sil">
+                          <button
+                            onClick={() => setDeleteDialog({ isOpen: true, surveyId: survey.id })}
+                            className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors text-sm font-semibold border border-red-200"
+                          >
+                            🗑️
+                          </button>
+                        </Tooltip>
                       )}
                     </div>
                     {user.id === survey.creatorId && (survey._count?.responses || 0) > 0 && (
-                      <Link
-                        href={`/surveys/${survey.id}/statistics`}
-                        className="flex items-center justify-center w-full px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 rounded-xl hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 text-sm font-semibold border border-emerald-200"
-                      >
-                        <span className="mr-2">📊</span>
-                        İstatistikleri Gör
-                      </Link>
+                      <Tooltip content="Anket sonuçlarını ve istatistikleri görüntüle">
+                        <Link
+                          href={`/surveys/${survey.id}/statistics`}
+                          className="flex items-center justify-center w-full px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 rounded-xl hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 text-sm font-semibold border border-emerald-200"
+                        >
+                          <span className="mr-2">📊</span>
+                          İstatistikleri Gör
+                        </Link>
+                      </Tooltip>
                     )}
                   </div>
                 </div>
@@ -153,6 +165,17 @@ export default function SurveysPage() {
           )}
         </div>
       </main>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        title="Anketi Sil"
+        message="Bu anketi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm yanıtlar silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="İptal"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteDialog({ isOpen: false, surveyId: null })}
+        type="danger"
+      />
     </div>
   );
 }

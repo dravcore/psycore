@@ -7,11 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import axiosInstance from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth';
 
 export default function RegisterPage() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const { addNotification } = useNotificationStore();
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,9 +35,12 @@ export default function RegisterPage() {
       const { user, access_token, refresh_token } = response.data;
       
       setAuth(user, access_token, refresh_token);
+      addNotification({ type: 'success', title: 'Hoş Geldiniz!', message: `${user.username}, hesabınız başarıyla oluşturuldu.` });
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Kayıt olurken bir hata oluştu');
+      const errorMsg = err.response?.data?.message || 'Kayıt olurken bir hata oluştu';
+      setError(errorMsg);
+      addNotification({ type: 'error', title: 'Kayıt Başarısız', message: errorMsg });
     } finally {
       setIsLoading(false);
     }

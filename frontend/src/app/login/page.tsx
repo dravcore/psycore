@@ -7,11 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import axiosInstance from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import { loginSchema, type LoginInput } from '@/lib/validations/auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const { addNotification } = useNotificationStore();
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,9 +34,12 @@ export default function LoginPage() {
       const { user, access_token, refresh_token } = response.data;
       
       setAuth(user, access_token, refresh_token);
+      addNotification({ type: 'success', title: 'Hoş Geldiniz!', message: `${user.username}, başarıyla giriş yaptınız.` });
       router.push('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Giriş yapılırken bir hata oluştu');
+      const errorMsg = err.response?.data?.message || 'Giriş yapılırken bir hata oluştu';
+      setError(errorMsg);
+      addNotification({ type: 'error', title: 'Giriş Başarısız', message: errorMsg });
     } finally {
       setIsLoading(false);
     }
