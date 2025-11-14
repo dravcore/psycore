@@ -56,4 +56,10 @@ export class SurveysController {
   getStatistics(@Param('id') id: string, @Request() req) {
     return this.surveysService.getStatistics(id, req.user.userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/ai-insights')
+  getAIInsights(@Param('id') id: string, @Request() req) {
+    return this.surveysService.getAIInsights(id, req.user.userId);
+  }
 }

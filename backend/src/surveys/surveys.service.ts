@@ -1,13 +1,20 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { OpenAIService } from '../openai/openai.service';
 import { CreateSurveyDto } from './dto/create-survey.dto';
 import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { SubmitResponseDto } from './dto/submit-response.dto';
 import { SurveyStatisticsDto, QuestionStatistics } from './dto/survey-statistics.dto';
+import { AIInsightsDto, SentimentAnalysisDto } from './dto/ai-insights.dto';
 
 @Injectable()
 export class SurveysService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(SurveysService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private openAIService: OpenAIService,
+  ) {}
 
   async create(userId: string, createSurveyDto: CreateSurveyDto) {
     console.log('Creating survey with userId:', userId);
@@ -152,7 +159,7 @@ export class SurveysService {
     }
 
     // Create response with answers
-    return this.prisma.surveyResponse.create({
+    const response = await this.prisma.surveyResponse.create({
       data: {
         surveyId,
         userId,
@@ -168,6 +175,44 @@ export class SurveysService {
         },
       },
     });
+
+    // Perform sentiment analysis on TEXT type answers asynchronously
+    this.performSentimentAnalysis(response.answers).catch(error => {
+      this.logger.error('Failed to perform sentiment analysis:', error);
+    });
+
+    return response;
+  }
+
+  private async performSentimentAnalysis(answers: any[]) {
+    const textAnswers = answers.filter(a => a.question?.type === 'TEXT' && a.value.trim().length > 0);
+    
+    if (textAnswers.length === 0) {
+      return;
+    }
+
+    this.logger.log(`Performing sentiment analysis on ${textAnswers.length} TEXT answers`);
+
+    for (const answer of textAnswers) {
+      try {
+        const analysis = await this.openAIService.analyzeSentiment(answer.value);
+        
+        await this.prisma.sentimentAnalysis.create({
+          data: {
+            answerId: answer.id,
+            sentiment: analysis.sentiment,
+            confidence: analysis.confidence,
+            emotions: analysis.emotions,
+            keywords: analysis.keywords,
+            summary: analysis.summary,
+          },
+        });
+
+        this.logger.log(`Sentiment analysis completed for answer ${answer.id}: ${analysis.sentiment} (${analysis.confidence})`);
+      } catch (error) {
+        this.logger.error(`Failed to analyze sentiment for answer ${answer.id}:`, error);
+      }
+    }
   }
 
   async getResponses(surveyId: string, userId: string) {
@@ -293,6 +338,149 @@ export class SurveysService {
       questions: questionStats,
       createdAt: survey.createdAt,
       lastResponseAt: lastResponse,
+    };
+  }
+
+  async getAIInsights(surveyId: string, userId: string): Promise<AIInsightsDto> {
+    const survey: any = await this.prisma.survey.findUnique({
+      where: { id: surveyId },
+      include: {
+        questions: true,
+        responses: {
+          include: {
+            answers: {
+              include: {
+                question: true,
+                analysis: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!survey) {
+      throw new NotFoundException('Anket bulunamadı');
+    }
+
+    if (survey.creatorId !== userId) {
+      throw new ForbiddenException('Bu anketin AI analizlerini görme yetkiniz yok');
+    }
+
+    // Get all TEXT answers with their analyses
+    const textAnswers = survey.responses
+      .flatMap((r: any) => r.answers)
+      .filter((a: any) => a.question?.type === 'TEXT' && a.analysis);
+
+    const totalTextResponses = survey.responses
+      .flatMap((r: any) => r.answers)
+      .filter((a: any) => a.question?.type === 'TEXT').length;
+
+    if (textAnswers.length === 0) {
+      return {
+        surveyId: survey.id,
+        title: survey.title,
+        totalTextResponses,
+        analyzedResponses: 0,
+        overallSentiment: {
+          positive: 0,
+          negative: 0,
+          neutral: 0,
+          mixed: 0,
+        },
+        averageConfidence: 0,
+        commonEmotions: [],
+        topKeywords: [],
+        analyses: [],
+      };
+    }
+
+    // Calculate overall sentiment distribution
+    const sentimentCounts = {
+      positive: 0,
+      negative: 0,
+      neutral: 0,
+      mixed: 0,
+    };
+
+    let totalConfidence = 0;
+    const emotionCounts: { [key: string]: number } = {};
+    const keywordCounts: { [key: string]: number } = {};
+
+    const analyses: SentimentAnalysisDto[] = textAnswers
+      .filter((answer: any) => answer.analysis) // Ensure analysis exists
+      .map((answer: any) => {
+        const analysis = answer.analysis;
+        
+        // Count sentiments
+        sentimentCounts[analysis.sentiment as keyof typeof sentimentCounts]++;
+        
+        // Sum confidence
+        totalConfidence += analysis.confidence;
+
+        // Count emotions
+        if (Array.isArray(analysis.emotions)) {
+          analysis.emotions.forEach((e: any) => {
+            emotionCounts[e.emotion] = (emotionCounts[e.emotion] || 0) + 1;
+          });
+        }
+
+        // Count keywords
+        analysis.keywords.forEach(keyword => {
+          keywordCounts[keyword] = (keywordCounts[keyword] || 0) + 1;
+        });
+
+        return {
+          answerId: answer.id,
+          questionText: answer.question.text,
+          answerValue: answer.value,
+          sentiment: analysis.sentiment,
+          confidence: analysis.confidence,
+          emotions: Array.isArray(analysis.emotions) ? (analysis.emotions as any[]).map((e: any) => ({
+            emotion: e.emotion,
+            intensity: e.intensity,
+          })) : [],
+          keywords: analysis.keywords,
+          summary: analysis.summary,
+          createdAt: analysis.createdAt,
+        };
+      });
+
+    // Get top emotions and keywords
+    const commonEmotions = Object.entries(emotionCounts)
+      .map(([emotion, count]) => ({ emotion, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    const topKeywords = Object.entries(keywordCounts)
+      .map(([keyword, count]) => ({ keyword, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20);
+
+    // Generate AI summary
+    let aiSummary: string | undefined;
+    try {
+      aiSummary = await this.openAIService.generateInsight({
+        totalResponses: textAnswers.length,
+        sentiments: sentimentCounts,
+        topEmotions: commonEmotions.slice(0, 5).map(e => e.emotion),
+        topKeywords: topKeywords.slice(0, 10).map(k => k.keyword),
+      });
+    } catch (error) {
+      this.logger.error('Failed to generate AI summary:', error);
+    }
+
+    return {
+      surveyId: survey.id,
+      title: survey.title,
+      totalTextResponses,
+      analyzedResponses: textAnswers.length,
+      overallSentiment: sentimentCounts,
+      averageConfidence: totalConfidence / textAnswers.length,
+      commonEmotions,
+      topKeywords,
+      analyses,
+      aiSummary,
     };
   }
 }

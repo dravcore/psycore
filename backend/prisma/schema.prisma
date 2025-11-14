@@ -90,15 +90,30 @@ model SurveyResponse {
 }
 
 model Answer {
-  id         String         @id @default(uuid())
+  id         String          @id @default(uuid())
   questionId String
-  question   Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question   Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
   responseId String
-  response   SurveyResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  response   SurveyResponse  @relation(fields: [responseId], references: [id], onDelete: Cascade)
   value      String
-  createdAt  DateTime       @default(now())
+  analysis   SentimentAnalysis?
+  createdAt  DateTime        @default(now())
 
   @@index([questionId])
   @@index([responseId])
   @@map("answers")
+}
+
+model SentimentAnalysis {
+  id         String   @id @default(uuid())
+  answerId   String   @unique
+  answer     Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  sentiment  String   // positive, negative, neutral, mixed
+  confidence Float
+  emotions   Json     // Array of {emotion: string, intensity: number}
+  keywords   String[]
+  summary    String
+  createdAt  DateTime @default(now())
+
+  @@map("sentiment_analyses")
 }

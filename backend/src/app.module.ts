@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { SurveysModule } from './surveys/surveys.module';
+import { OpenAIModule } from './openai/openai.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SurveysModule } from './surveys/surveys.module';
     PrismaModule,
     AuthModule,
     SurveysModule,
+    OpenAIModule,
   ],
   controllers: [AppController],
   providers: [AppService],
