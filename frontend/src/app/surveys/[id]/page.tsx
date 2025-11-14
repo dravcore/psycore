@@ -113,15 +113,18 @@ export default function SurveyDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <nav className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-                PsyCore
+              <Link href="/dashboard" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+                  <span className="text-xl">🧠</span>
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PsyCore</span>
               </Link>
-              <Link href="/surveys" className="text-gray-600 hover:text-gray-900">
+              <Link href="/surveys" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                 Anketler
               </Link>
             </div>
@@ -129,32 +132,43 @@ export default function SurveyDetailPage() {
         </div>
       </nav>
 
-      <main className="max-w-3xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <Link href="/surveys" className="text-blue-600 hover:text-blue-700">
-            ← Geri
+          <Link href="/surveys" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+            <span className="mr-2">←</span> Anketlere Dön
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{survey.title}</h1>
-          <p className="text-gray-600 mb-4">{survey.description}</p>
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <span>👤 {survey.creator?.username}</span>
-            <span>•</span>
-            <span>📝 {survey.questions?.length || 0} soru</span>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-6 border border-gray-100">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+            {survey.title}
+          </h1>
+          <p className="text-gray-600 mb-6 text-lg">{survey.description}</p>
+          <div className="flex items-center space-x-6 text-sm">
+            <span className="flex items-center text-gray-600">
+              <span className="text-lg mr-2">👤</span>
+              <span className="font-medium">{survey.creator?.username}</span>
+            </span>
+            <span className="text-gray-400">•</span>
+            <span className="flex items-center text-gray-600">
+              <span className="text-lg mr-2">📝</span>
+              <span className="font-medium">{survey.questions?.length || 0} soru</span>
+            </span>
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+            <p className="text-red-800 flex items-center">
+              <span className="mr-2">⚠️</span>
+              {error}
+            </p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {survey.questions?.map((question, index) => (
-            <div key={question.id} className="bg-white rounded-lg shadow p-6">
+            <div key={question.id} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow duration-200">
               <div className="mb-4">
                 <label className="block text-lg font-medium text-gray-900 mb-2">
                   {index + 1}. {question.text}
@@ -244,13 +258,23 @@ export default function SurveyDetailPage() {
             </div>
           ))}
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
             >
-              {submitting ? 'Gönderiliyor...' : 'Cevapları Gönder'}
+              {submitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Gönderiliyor...
+                </span>
+              ) : (
+                '✓ Cevapları Gönder'
+              )}
             </button>
           </div>
         </form>
