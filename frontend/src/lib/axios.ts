@@ -33,18 +33,26 @@ axiosInstance.interceptors.response.use(
       const refreshToken = localStorage.getItem('refresh_token');
       if (refreshToken) {
         try {
-          // TODO: Implement refresh token endpoint
-          // const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
-          //   refresh_token: refreshToken,
-          // });
-          // localStorage.setItem('access_token', response.data.access_token);
-          // return axiosInstance(originalRequest);
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
+            refresh_token: refreshToken,
+          });
+
+          const { access_token, refresh_token: newRefreshToken } = response.data;
+          
+          localStorage.setItem('access_token', access_token);
+          localStorage.setItem('refresh_token', newRefreshToken);
+          
+          originalRequest.headers.Authorization = `Bearer ${access_token}`;
+          return axiosInstance(originalRequest);
         } catch (refreshError) {
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           window.location.href = '/login';
           return Promise.reject(refreshError);
         }
+      } else {
+        localStorage.removeItem('access_token');
+        window.location.href = '/login';
       }
     }
 

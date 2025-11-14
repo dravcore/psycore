@@ -4,14 +4,22 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Navbar from '@/components/Navbar';
+import authApi from '@/lib/api/auth';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+  });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   useEffect(() => {
@@ -26,9 +34,51 @@ export default function ProfilePage() {
   }, [user, router]);
 
   const handleSave = async () => {
-    // TODO: Implement profile update API
-    alert('Profil güncelleme özelliği yakında eklenecek!');
-    setIsEditing(false);
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const updatedUser = await authApi.updateProfile({
+        username: formData.username !== user.username ? formData.username : undefined,
+        email: formData.email !== user.email ? formData.email : undefined,
+      });
+
+      setUser(updatedUser);
+      setIsEditing(false);
+      alert('✅ Profil başarıyla güncellendi!');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Profil güncellenirken bir hata oluştu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('❌ Yeni şifreler eşleşmiyor!');
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      alert('❌ Şifre en az 6 karakter olmalıdır!');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await authApi.updateProfile({
+        password: passwordData.newPassword,
+        currentPassword: passwordData.currentPassword,
+      });
+
+      setIsChangingPassword(false);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      alert('✅ Şifre başarıyla değiştirildi!');
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Şifre değiştirilirken bir hata oluştu');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user) return null;
@@ -135,15 +185,17 @@ export default function ProfilePage() {
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                    disabled={loading}
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
                   >
                     İptal
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                    disabled={loading}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
                   >
-                    💾 Kaydet
+                    {loading ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
                   </button>
                 </div>
               )}
@@ -174,9 +226,76 @@ export default function ProfilePage() {
         <div className="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 px-8 py-8">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">🔐 Şifre Değiştir</h3>
           <p className="text-gray-600 mb-6">Hesabınızın güvenliği için düzenli olarak şifrenizi değiştirin</p>
-          <button className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
-            Şifre Değiştir
-          </button>
+          
+          {!isChangingPassword ? (
+            <button 
+              onClick={() => setIsChangingPassword(true)}
+              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+            >
+              Şifre Değiştir
+            </button>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mevcut Şifre
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Yeni Şifre
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Yeni Şifre (Tekrar)
+                </label>
+                <input
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => {
+                    setIsChangingPassword(false);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  }}
+                  disabled={loading}
+                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={handlePasswordChange}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                >
+                  {loading ? '⏳ Değiştiriliyor...' : '🔒 Şifreyi Değiştir'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
