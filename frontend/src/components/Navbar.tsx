@@ -73,7 +73,8 @@ export default function Navbar() {
             {/* Theme Toggle */}
             <button
               onClick={() => {
-                const newTheme = preferences?.theme === 'dark' ? 'light' : 'dark';
+                const currentTheme = preferences?.theme || 'light';
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 updatePreference('theme', newTheme);
               }}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
