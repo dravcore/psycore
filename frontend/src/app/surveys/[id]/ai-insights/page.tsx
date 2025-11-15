@@ -282,8 +282,11 @@ export default function AIInsightsPage() {
             </Card>
 
             {/* Top Keywords */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">🔑 Anahtar Kelimeler</h2>
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>🔑 Anahtar Kelimeler</CardTitle>
+              </CardHeader>
+              <CardContent>
               <div className="flex flex-wrap gap-3">
                 {insights.topKeywords.slice(0, 20).map((keyword) => (
                   <div
@@ -297,11 +300,15 @@ export default function AIInsightsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Individual Analyses */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">📝 Detaylı Analizler</h2>
+            {/* Question Analysis */}
+            <Card>
+              <CardHeader>
+                <CardTitle>📝 Detaylı Analizler</CardTitle>
+              </CardHeader>
+              <CardContent>
               <div className="space-y-6">
                 {insights.analyses.map((analysis, index) => (
                   <div
@@ -354,7 +361,9 @@ export default function AIInsightsPage() {
                     {/* Keywords */}
                     {analysis.keywords.length > 0 && (
                       <div>
-                        <p className="text-xs text-gray-500 mb-2">Anahtar Kelimeler:</p>
+                                              </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-2">Anahtar Kelimeler:</p>
                         <div className="flex flex-wrap gap-2">
                           {analysis.keywords.map((keyword, idx) => (
                             <span

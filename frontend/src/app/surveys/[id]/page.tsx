@@ -127,7 +127,6 @@ export default function SurveyDetailPage() {
             <p className="text-muted-foreground">Cevaplarınız başarıyla kaydedildi.</p>
           </CardContent>
         </Card>
-        </div>
       </div>
     );
   }
