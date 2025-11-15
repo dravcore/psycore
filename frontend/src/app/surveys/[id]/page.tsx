@@ -97,7 +97,7 @@ export default function SurveyDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <SurveyDetailSkeleton />
       </div>
@@ -106,7 +106,7 @@ export default function SurveyDetailPage() {
 
   if (!survey) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Anket bulunamadı</p>
           <Link href="/surveys" className="text-blue-600 hover:text-blue-700">
@@ -119,7 +119,7 @@ export default function SurveyDetailPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-lg shadow">
           <div className="text-6xl mb-4">✅</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
@@ -130,59 +130,61 @@ export default function SurveyDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <Link href="/surveys" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+          <Link href="/surveys" className="inline-flex items-center text-primary hover:underline font-medium transition-colors">
             <span className="mr-2">←</span> Anketlere Dön
           </Link>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-6 border border-gray-100">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-            {survey.title}
-          </h1>
-          <p className="text-gray-600 mb-6 text-lg">{survey.description}</p>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-3xl">{survey.title}</CardTitle>
+            <CardDescription className="text-lg">{survey.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
           <div className="flex items-center space-x-6 text-sm">
             <span className="flex items-center text-gray-600">
               <span className="text-lg mr-2">👤</span>
               <span className="font-medium">{survey.creator?.username}</span>
             </span>
             <span className="text-gray-400">•</span>
-            <span className="flex items-center text-gray-600">
+            <span className="flex items-center text-muted-foreground">
               <span className="text-lg mr-2">📝</span>
               <span className="font-medium">{survey.questions?.length || 0} soru</span>
             </span>
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
-            <p className="text-red-800 flex items-center">
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription className="flex items-center">
               <span className="mr-2">⚠️</span>
               {error}
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {survey.questions?.map((question, index) => (
-            <div key={question.id} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow duration-200">
+            <Card key={question.id} className="hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
               <div className="mb-4">
-                <label className="block text-lg font-medium text-gray-900 mb-2">
+                <Label className="text-lg">
                   {index + 1}. {question.text}
-                  {question.required && <span className="text-red-500 ml-1">*</span>}
-                </label>
+                  {question.required && <span className="text-destructive ml-1">*</span>}
+                </Label>
               </div>
 
               {question.type === 'TEXT' && (
-                <textarea
+                <Textarea
                   value={answers[question.id!] || ''}
                   onChange={(e) => handleAnswerChange(question.id!, e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Cevabınızı yazın..."
                   required={question.required}
                 />
@@ -199,9 +201,9 @@ export default function SurveyDetailPage() {
                     className="w-full"
                     required={question.required}
                   />
-                  <div className="flex justify-between text-sm text-gray-600 mt-2">
+                  <div className="flex justify-between text-sm text-muted-foreground mt-2">
                     <span>{question.minValue || 1}</span>
-                    <span className="font-medium text-lg">
+                    <span className="font-medium text-lg text-foreground">
                       {answers[question.id!] || question.minValue || 1}
                     </span>
                     <span>{question.maxValue || 10}</span>
@@ -212,7 +214,7 @@ export default function SurveyDetailPage() {
               {question.type === 'CHOICE' && (
                 <div className="space-y-2">
                   {question.options?.map((option, i) => (
-                    <label key={i} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer">
+                    <label key={i} className="flex items-center space-x-3 p-3 border rounded-md hover:bg-accent cursor-pointer">
                       <input
                         type="radio"
                         name={question.id}
@@ -230,7 +232,7 @@ export default function SurveyDetailPage() {
 
               {question.type === 'YESNO' && (
                 <div className="flex space-x-4">
-                  <label className="flex items-center space-x-2 p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer flex-1">
+                  <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-accent cursor-pointer flex-1">
                     <input
                       type="radio"
                       name={question.id}
@@ -242,7 +244,7 @@ export default function SurveyDetailPage() {
                     />
                     <span className="text-gray-900">Evet</span>
                   </label>
-                  <label className="flex items-center space-x-2 p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer flex-1">
+                  <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-accent cursor-pointer flex-1">
                     <input
                       type="radio"
                       name={question.id}
@@ -256,14 +258,17 @@ export default function SurveyDetailPage() {
                   </label>
                 </div>
               )}
-            </div>
+              </CardContent>
+            </Card>
           ))}
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
-            <button
+          <Card>
+            <CardContent className="pt-6">
+            <Button
               type="submit"
               disabled={submitting}
-              className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              className="w-full text-lg"
+              size="lg"
             >
               {submitting ? (
                 <span className="flex items-center justify-center">
@@ -276,8 +281,9 @@ export default function SurveyDetailPage() {
               ) : (
                 '✓ Cevapları Gönder'
               )}
-            </button>
-          </div>
+            </Button>
+            </CardContent>
+          </Card>
         </form>
       </main>
     </div>
