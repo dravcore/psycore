@@ -333,53 +333,46 @@ export default function AIInsightsPage() {
                         <span>{getSentimentEmoji(analysis.sentiment)}</span>
                         {getSentimentText(analysis.sentiment)}
                       </span>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm">
                         Güven: {(analysis.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
 
                     {/* Summary */}
-                    <p className="text-gray-700 mb-3">{analysis.summary}</p>
+                    <p className="mb-3">{analysis.summary}</p>
 
-                    {/* Emotions */}
-                    {analysis.emotions.length > 0 && (
-                      <div className="mb-3">
-                        <p className="text-xs text-gray-500 mb-2">Duygular:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {analysis.emotions.map((emotion, idx) => (
-                            <span
-                              key={idx}
-                              className="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full"
-                            >
-                              {emotion.emotion} ({(emotion.intensity * 100).toFixed(0)}%)
-                            </span>
-                          ))}
+                    {/* Emotions & Keywords */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {analysis.emotions.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-2">Duygular:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {analysis.emotions.map((emotion, idx) => (
+                              <Badge key={idx} variant="secondary">
+                                {emotion.emotion} ({(emotion.intensity * 100).toFixed(0)}%)
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-
-                    {/* Keywords */}
-                    {analysis.keywords.length > 0 && (
-                      <div>
-                                              </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-2">Anahtar Kelimeler:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {analysis.keywords.map((keyword, idx) => (
-                            <span
-                              key={idx}
-                              className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
-                            >
-                              {keyword}
-                            </span>
-                          ))}
+                      )}
+                      {analysis.keywords.length > 0 && (
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-2">Anahtar Kelimeler:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {analysis.keywords.map((keyword, idx) => (
+                              <Badge key={idx} variant="outline">
+                                {keyword}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+              </CardContent>
+            </Card>
           </>
         )}
       </div>
