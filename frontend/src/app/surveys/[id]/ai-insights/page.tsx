@@ -126,95 +126,110 @@ export default function AIInsightsPage() {
           <div className="flex items-center gap-3 mb-4">
             <Link
               href={`/surveys/${surveyId}/statistics`}
-              className="text-gray-600 hover:text-gray-800 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               ← İstatistiklere Dön
             </Link>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text mb-2">
+          <h1 className="text-4xl font-bold mb-2">
             🤖 AI Duygu Analizi
           </h1>
-          <p className="text-gray-600 text-lg">{insights.title}</p>
+          <p className="text-muted-foreground text-lg">{insights.title}</p>
         </div>
 
         {/* No Text Responses */}
         {insights.totalTextResponses === 0 ? (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
-            <span className="text-4xl mb-3 block">💬</span>
-            <p className="text-yellow-800 font-medium">Bu ankette metin yanıtı bulunmuyor</p>
-            <p className="text-yellow-600 text-sm mt-2">
-              AI analizi sadece TEXT tipindeki sorular için yapılabilir.
-            </p>
-          </div>
+          <Alert>
+            <AlertDescription className="text-center py-4">
+              <span className="text-4xl mb-3 block">💬</span>
+              <p className="font-medium mb-2">Bu ankette metin yanıtı bulunmuyor</p>
+              <p className="text-sm text-muted-foreground">
+                AI analizi sadece TEXT tipindeki sorular için yapılabilir.
+              </p>
+            </AlertDescription>
+          </Alert>
         ) : insights.analyzedResponses === 0 ? (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
-            <span className="text-4xl mb-3 block">⏳</span>
-            <p className="text-blue-800 font-medium">Analizler henüz tamamlanmadı</p>
-            <p className="text-blue-600 text-sm mt-2">
-              {insights.totalTextResponses} metin yanıtı AI tarafından analiz ediliyor...
-            </p>
-          </div>
+          <Alert>
+            <AlertDescription className="text-center py-4">
+              <span className="text-4xl mb-3 block">⏳</span>
+              <p className="font-medium mb-2">Analizler henüz tamamlanmadı</p>
+              <p className="text-sm text-muted-foreground">
+                {insights.totalTextResponses} metin yanıtı AI tarafından analiz ediliyor...
+              </p>
+            </AlertDescription>
+          </Alert>
         ) : (
           <>
             {/* Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-medium">Analiz Edilen</p>
-                    <p className="text-4xl font-bold text-blue-600 mt-2">
-                      {insights.analyzedResponses}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      / {insights.totalTextResponses} metin yanıtı
-                    </p>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Analiz Edilen</p>
+                      <p className="text-4xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                        {insights.analyzedResponses}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        / {insights.totalTextResponses} metin yanıtı
+                      </p>
+                    </div>
+                    <div className="text-5xl">📊</div>
                   </div>
-                  <div className="text-5xl">📊</div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-medium">Ortalama Güven</p>
-                    <p className="text-4xl font-bold text-purple-600 mt-2">
-                      {(insights.averageConfidence * 100).toFixed(0)}%
-                    </p>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Ortalama Güven</p>
+                      <p className="text-4xl font-bold text-purple-600 dark:text-purple-400 mt-2">
+                        {(insights.averageConfidence * 100).toFixed(0)}%
+                      </p>
+                    </div>
+                    <div className="text-5xl">🎯</div>
                   </div>
-                  <div className="text-5xl">🎯</div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
 
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-600 text-sm font-medium">Duygu Çeşidi</p>
-                    <p className="text-4xl font-bold text-indigo-600 mt-2">
-                      {insights.commonEmotions.length}
-                    </p>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Duygu Çeşidi</p>
+                      <p className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mt-2">
+                        {insights.commonEmotions.length}
+                      </p>
+                    </div>
+                    <div className="text-5xl">🎭</div>
                   </div>
-                  <div className="text-5xl">🎭</div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* AI Summary */}
             {insights.aiSummary && (
-              <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-8 mb-8 text-white">
-                <div className="flex items-start gap-4">
-                  <div className="text-4xl">🤖</div>
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-bold mb-3">AI Özeti</h2>
-                    <p className="text-lg text-white/90 leading-relaxed">{insights.aiSummary}</p>
+              <Card className="mb-8 bg-primary text-primary-foreground">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="text-4xl">🤖</div>
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold mb-3">AI Özeti</h2>
+                      <p className="text-lg leading-relaxed opacity-90">{insights.aiSummary}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             )}
 
             {/* Sentiment Distribution */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">📈 Genel Duygu Dağılımı</h2>
-              <div className="space-y-4">
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>📈 Genel Duygu Dağılımı</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
                 {Object.entries(insights.overallSentiment).map(([sentiment, count]) => {
                   if (count === 0) return null;
                   const percentage = totalSentiments > 0 ? (count / totalSentiments) * 100 : 0;
@@ -223,18 +238,18 @@ export default function AIInsightsPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-2xl">{getSentimentEmoji(sentiment)}</span>
-                          <span className="font-medium text-gray-700">
+                          <span className="font-medium">
                             {getSentimentText(sentiment)}
                           </span>
                         </div>
                         <div className="text-right">
-                          <span className="font-bold text-gray-800">{count}</span>
-                          <span className="text-gray-500 text-sm ml-2">
+                          <span className="font-bold">{count}</span>
+                          <span className="text-muted-foreground text-sm ml-2">
                             ({percentage.toFixed(0)}%)
                           </span>
                         </div>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                      <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
                         <div
                           className={`h-full bg-gradient-to-r ${getSentimentColor(sentiment)} rounded-full transition-all duration-500`}
                           style={{ width: `${percentage}%` }}
@@ -243,24 +258,28 @@ export default function AIInsightsPage() {
                     </div>
                   );
                 })}
-              </div>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Common Emotions */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">💫 Yaygın Duygular</h2>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {insights.commonEmotions.slice(0, 10).map((emotion, index) => (
-                  <div
-                    key={emotion.emotion}
-                    className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-4 text-center hover:shadow-lg transition-all transform hover:-translate-y-1"
-                  >
-                    <p className="text-2xl font-bold text-purple-600 mb-1">{emotion.count}</p>
-                    <p className="text-sm text-gray-700 capitalize">{emotion.emotion}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>💫 Yaygın Duygular</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {insights.commonEmotions.slice(0, 10).map((emotion, index) => (
+                    <Card key={emotion.emotion} className="hover:shadow-lg transition-all">
+                      <CardContent className="pt-6 text-center">
+                        <p className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{emotion.count}</p>
+                        <p className="text-sm capitalize">{emotion.emotion}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Top Keywords */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">

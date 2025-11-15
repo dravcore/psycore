@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
 export default function TimelinePage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function TimelinePage() {
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="flex items-center justify-center h-[80vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     );
@@ -78,13 +79,15 @@ export default function TimelinePage() {
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
-            <span className="text-6xl mb-4 block">📊</span>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Henüz AI Analizi Yok</h3>
-            <p className="text-gray-600">
-              Ruh hali zaman çizelgenizi görmek için önce anketlerinize AI analizi yapın.
-            </p>
-          </div>
+          <Alert>
+            <AlertDescription className="text-center py-4">
+              <span className="text-6xl mb-4 block">📊</span>
+              <h3 className="text-xl font-bold mb-2">Henüz AI Analizi Yok</h3>
+              <p className="text-muted-foreground">
+                Ruh hali zaman çizelgenizi görmek için önce anketlerinize AI analizi yapın.
+              </p>
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
@@ -188,13 +191,13 @@ export default function TimelinePage() {
             {timeline.entries.map((entry, index) => (
               <div
                 key={index}
-                className="border-l-4 pl-4 py-3 hover:bg-gray-50 rounded-r-lg transition-colors"
+                className="border-l-4 pl-4 py-3 hover:bg-accent rounded-r-lg transition-colors"
                 style={{ borderColor: sentimentColors[entry.sentiment] }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-500">
+                      <span className="text-sm font-medium text-muted-foreground">
                         {new Date(entry.date).toLocaleDateString('tr-TR', { 
                           day: 'numeric',
                           month: 'long',
@@ -203,13 +206,13 @@ export default function TimelinePage() {
                           minute: '2-digit'
                         })}
                       </span>
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      <Badge variant="secondary">
                         {entry.surveyTitle}
-                      </span>
+                      </Badge>
                     </div>
-                    <p className="text-sm text-gray-700 font-medium mb-1">{entry.questionText}</p>
-                    <p className="text-sm text-gray-600 italic mb-2">"{entry.answerValue}"</p>
-                    <p className="text-sm text-gray-600">{entry.summary}</p>
+                    <p className="text-sm font-medium mb-1">{entry.questionText}</p>
+                    <p className="text-sm text-muted-foreground italic mb-2">"{entry.answerValue}"</p>
+                    <p className="text-sm text-muted-foreground">{entry.summary}</p>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {entry.emotions.slice(0, 3).map((emotion, idx) => (
                         <span

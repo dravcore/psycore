@@ -147,7 +147,7 @@ export default function ProfilePage() {
           {/* Header */}
           <div className="bg-primary px-8 py-12 relative">
             <div className="flex items-center space-x-6">
-              <div className="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold text-primary shadow-xl">
+              <div className="w-24 h-24 bg-card rounded-full flex items-center justify-center text-4xl font-bold text-primary shadow-xl border-2 border-border">
                 {getInitials(user.username)}
               </div>
               <div>
@@ -160,30 +160,31 @@ export default function ProfilePage() {
           {/* Body */}
           <div className="px-8 py-8">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-800">Hesap Bilgileri</h3>
-              <button
+              <h3 className="text-xl font-semibold">Hesap Bilgileri</h3>
+              <Button
                 onClick={() => setIsEditing(!isEditing)}
-                className="px-4 py-2 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+                variant="default"
               >
                 {isEditing ? '❌ İptal' : '✏️ Düzenle'}
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-6">
               {/* Username */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="username">
                   Kullanıcı Adı
-                </label>
+                </Label>
                 {isEditing ? (
-                  <input
+                  <Input
+                    id="username"
                     type="text"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="mt-2"
                   />
                 ) : (
-                  <p className="text-gray-900 text-lg font-medium px-4 py-3 bg-gray-50 rounded-xl">
+                  <p className="text-lg font-medium px-4 py-3 bg-muted rounded-xl mt-2">
                     {user.username}
                   </p>
                 )}
@@ -191,18 +192,19 @@ export default function ProfilePage() {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="email">
                   E-posta
-                </label>
+                </Label>
                 {isEditing ? (
-                  <input
+                  <Input
+                    id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="mt-2"
                   />
                 ) : (
-                  <p className="text-gray-900 text-lg font-medium px-4 py-3 bg-gray-50 rounded-xl">
+                  <p className="text-lg font-medium px-4 py-3 bg-muted rounded-xl mt-2">
                     {user.email}
                   </p>
                 )}
@@ -210,62 +212,70 @@ export default function ProfilePage() {
 
               {/* Role */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label>
                   Rol
-                </label>
-                <p className="text-gray-900 text-lg font-medium px-4 py-3 bg-gray-50 rounded-xl inline-block">
-                  <span className="px-3 py-1 bg-muted rounded-lg">
+                </Label>
+                <div className="mt-2">
+                  <Badge variant="secondary">
                     {user.role || 'USER'}
-                  </span>
-                </p>
+                  </Badge>
+                </div>
               </div>
 
               {isEditing && (
                 <div className="flex justify-end space-x-3 pt-4">
-                  <button
+                  <Button
                     onClick={() => setIsEditing(false)}
                     disabled={loading}
-                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    variant="outline"
                   >
                     İptal
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleSave}
                     disabled={loading}
-                    className="px-6 py-3 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                    variant="default"
                   >
                     {loading ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           </div>
 
           {/* Stats Section */}
-          <div className="border-t border-gray-200 px-8 py-8 bg-gradient-to-r from-gray-50 to-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">İstatistikler</h3>
+          <div className="border-t px-8 py-8 bg-muted/30">
+            <h3 className="text-lg font-semibold mb-4">İstatistikler</h3>
             {statsLoading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl p-4 shadow-md">
-                  <p className="text-sm text-gray-600">Oluşturulan Anket</p>
-                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.totalSurveysCreated || 0}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 shadow-md">
-                  <p className="text-sm text-gray-600">Verilen Yanıt</p>
-                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.totalResponsesGiven || 0}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 shadow-md">
-                  <p className="text-sm text-gray-600">AI Analizi</p>
-                  <p className="text-3xl font-bold text-green-600 mt-2">{stats?.totalAnalyzedResponses || 0}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 shadow-md">
-                  <p className="text-sm text-gray-600">Üyelik Süresi</p>
-                  <p className="text-3xl font-bold text-foreground mt-2">{stats?.membershipDays || 0} <span className="text-sm font-normal">gün</span></p>
-                </div>
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">Oluşturulan Anket</p>
+                    <p className="text-3xl font-bold mt-2">{stats?.totalSurveysCreated || 0}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">Verilen Yanıt</p>
+                    <p className="text-3xl font-bold mt-2">{stats?.totalResponsesGiven || 0}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">AI Analizi</p>
+                    <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">{stats?.totalAnalyzedResponses || 0}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">Üyelik Süresi</p>
+                    <p className="text-3xl font-bold mt-2">{stats?.membershipDays || 0} <span className="text-sm font-normal">gün</span></p>
+                  </CardContent>
+                </Card>
               </div>
             )}
           </div>
@@ -279,71 +289,74 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent>
           {!isChangingPassword ? (
-            <button 
+            <Button 
               onClick={() => setIsChangingPassword(true)}
-              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
+              variant="destructive"
             >
               Şifre Değiştir
-            </button>
+            </Button>
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="currentPassword">
                   Mevcut Şifre
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="currentPassword"
                   type="password"
                   value={passwordData.currentPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
+                  className="mt-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="newPassword">
                   Yeni Şifre
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="newPassword"
                   type="password"
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
+                  className="mt-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Label htmlFor="confirmPassword">
                   Yeni Şifre (Tekrar)
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="confirmPassword"
                   type="password"
                   value={passwordData.confirmPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
+                  className="mt-2"
                 />
               </div>
 
               <div className="flex justify-end space-x-3 pt-4">
-                <button
+                <Button
                   onClick={() => {
                     setIsChangingPassword(false);
                     setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                   }}
                   disabled={loading}
-                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  variant="outline"
                 >
                   İptal
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handlePasswordChange}
                   disabled={loading}
-                  className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                  variant="destructive"
                 >
                   {loading ? '⏳ Değiştiriliyor...' : '🔒 Şifreyi Değiştir'}
-                </button>
+                </Button>
               </div>
             </div>
           )}

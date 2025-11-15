@@ -108,8 +108,8 @@ export default function SurveyDetailPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">Anket bulunamadı</p>
-          <Link href="/surveys" className="text-blue-600 hover:text-blue-700">
+          <p className="text-destructive mb-4">Anket bulunamadı</p>
+          <Link href="/surveys" className="text-primary hover:underline">
             ← Anketlere dön
           </Link>
         </div>
@@ -120,10 +120,13 @@ export default function SurveyDetailPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-lg shadow">
-          <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Teşekkürler!</h2>
-          <p className="text-gray-600">Cevaplarınız başarıyla kaydedildi.</p>
+        <Card className="max-w-md">
+          <CardContent className="text-center pt-6">
+            <div className="text-6xl mb-4">✅</div>
+            <h2 className="text-2xl font-bold mb-2">Teşekkürler!</h2>
+            <p className="text-muted-foreground">Cevaplarınız başarıyla kaydedildi.</p>
+          </CardContent>
+        </Card>
         </div>
       </div>
     );
@@ -147,11 +150,11 @@ export default function SurveyDetailPage() {
           </CardHeader>
           <CardContent>
           <div className="flex items-center space-x-6 text-sm">
-            <span className="flex items-center text-gray-600">
+            <span className="flex items-center text-muted-foreground">
               <span className="text-lg mr-2">👤</span>
               <span className="font-medium">{survey.creator?.username}</span>
             </span>
-            <span className="text-gray-400">•</span>
+            <span className="text-muted-foreground/50">•</span>
             <span className="flex items-center text-muted-foreground">
               <span className="text-lg mr-2">📝</span>
               <span className="font-medium">{survey.questions?.length || 0} soru</span>
@@ -222,9 +225,9 @@ export default function SurveyDetailPage() {
                         checked={answers[question.id!] === option}
                         onChange={(e) => handleAnswerChange(question.id!, e.target.value)}
                         required={question.required}
-                        className="text-blue-600"
+                        className="text-primary"
                       />
-                      <span className="text-gray-900">{option}</span>
+                      <span>{option}</span>
                     </label>
                   ))}
                 </div>
@@ -240,9 +243,9 @@ export default function SurveyDetailPage() {
                       checked={answers[question.id!] === 'Evet'}
                       onChange={(e) => handleAnswerChange(question.id!, e.target.value)}
                       required={question.required}
-                      className="text-blue-600"
+                      className="text-primary"
                     />
-                    <span className="text-gray-900">Evet</span>
+                    <span>Evet</span>
                   </label>
                   <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-accent cursor-pointer flex-1">
                     <input
@@ -252,9 +255,9 @@ export default function SurveyDetailPage() {
                       checked={answers[question.id!] === 'Hayır'}
                       onChange={(e) => handleAnswerChange(question.id!, e.target.value)}
                       required={question.required}
-                      className="text-blue-600"
+                      className="text-primary"
                     />
-                    <span className="text-gray-900">Hayır</span>
+                    <span>Hayır</span>
                   </label>
                 </div>
               )}

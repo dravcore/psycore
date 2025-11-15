@@ -159,8 +159,9 @@ export default function SurveysPage() {
           {loading ? (
             <SurveyListSkeleton count={6} />
           ) : filteredSurveys.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100">
-              <EmptyState
+            <Card>
+              <CardContent className="pt-6">
+                <EmptyState
                 icon={surveys.length === 0 ? "📝" : "🔍"}
                 title={surveys.length === 0 ? "Henüz Anket Yok" : "Sonuç Bulunamadı"}
                 description={
@@ -173,15 +174,16 @@ export default function SurveysPage() {
                     ? { label: 'İlk Anketi Oluştur', onClick: () => router.push('/surveys/create') }
                     : { label: 'Filtreleri Temizle', onClick: () => { setSearchTerm(''); setFilterStatus('all'); } }
                 }
-              />
-            </div>
+                />
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredSurveys.map((survey) => (
                 <Card key={survey.id} className="hover:shadow-lg transition-all group">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="group-hover:text-blue-600 transition-colors">
+                      <CardTitle className="group-hover:text-primary transition-colors">
                         {survey.title}
                       </CardTitle>
                       <Badge variant={survey.isActive ? 'default' : 'secondary'}>
